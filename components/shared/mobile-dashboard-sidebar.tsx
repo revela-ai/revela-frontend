@@ -29,7 +29,7 @@ import SideNavItem from "./side-nav-item";
 export default function MobileDashboardSidebar() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <header className="flex h-14 items-center gap-4 px-4 lg:h-[60px] lg:px-6">
+    <header className="flex h-14 items-center gap-4 border-b lg:border bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet open={isSidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden" onClick={() => setSidebarOpen(true)}>
