@@ -4,23 +4,16 @@ import Image from "next/image"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import RevelaLogo from "@/components/shared/logo"
+
 
 export default function Login() {
   return (
     <div className="w-full lg:grid min-h-screen lg:grid-cols-2">
       <div className="lg:hidden flex flex-col justify-center items-center mt-[5vh] lg:mt-0">
-        <div className="flex gap-1 lg:gap-4">
-          <Image
-            src="/images/logo.svg"
-            alt="Image"
-            width={53}
-            height={53}
-            className=""
-          />
-          <p className="lg:text-[35px] text-2xl self-center">Revela</p>
-        </div>
+        <RevelaLogo/>
         <p className="mt-4 text-muted-foreground">Sign in or create an account</p>
       </div>
       <div className="flex items-center justify-center py-12">
@@ -58,10 +51,10 @@ export default function Login() {
             <Button type="submit" className="w-full lg:w-[105px] rounded-full ms-auto">
               Continue
             </Button>
-           <div className="flex gap-5">
-           <Image src="/images/hr-line.svg" alt="horizontal line" className=" max-w-[120px] mx-auto" width={175} height={0}/>
-           <p className="text-balance text-muted-foreground">or</p>
-           <Image src="/images/hr-line.svg" alt="horizontal line" className="max-w-[120px] mx-auto" width={175} height={0}/>
+           <div className="flex">
+           <Image src="/images/hr-line.svg" alt="horizontal line" className=" lg:w-[186px] w-[120px] mx-auto" width={175} height={0}/>
+           <p className="text-balance text-muted-foreground">Or</p>
+           <Image src="/images/hr-line.svg" alt="horizontal line" className="lg:w-[186px] w-[120px] mx-auto" width={175} height={0}/>
            </div>
             <Button variant="outline" className="w-full">
             <Image src="/images/google-logo.svg" alt="google logo" className="mr-2" width={24} height={24}/>
