@@ -1,224 +1,229 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import RevelaLogo from "@/components/shared/logo";
 
+const formSchema = z
+  .object({
+    businessName: z.string().min(1, { message: "Business name is required" }),
+    email: z.string().email({ message: "Invalid email address" }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+type FormData = z.infer<typeof formSchema>;
 
 export default function Signup() {
-  const [step, setStep] = useState(1);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      businessName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-  const handleNextStep = () => {
-    setStep((prevStep) => prevStep + 1);
-  };
+  const signup = async (data: FormData) => {
+    const API_ENDPOINT =
+      "https://quantum-backend-sxxx.onrender.com/accounts/signup/";
 
-  const handlePrevStep = () => {
-    setStep((prevStep) => prevStep - 1);
+    setLoading(true);
+
+    try {
+      const response = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.businessName,
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      if (response.ok) {
+        router.push(
+          `/auth/email-verification?email=${encodeURIComponent(
+            data.email
+          )}&name=${encodeURIComponent(
+            data.businessName
+          )}&password=${encodeURIComponent(data.password)}`
+        );
+      } else {
+        const errorData = await response.json();
+        toast.error(`Signup failed: ${errorData.message}`);
+      }
+    } catch (error) {
+      toast.error("An error occurred during signup");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="w-full lg:grid min-h-screen lg:grid-cols-2">
       <div className="lg:hidden flex flex-col justify-center items-center mt-[5vh] lg:mt-0">
-        <RevelaLogo/>
+        <RevelaLogo />
         <p className="mt-2 lg:mt-4 text-muted-foreground">
           Sign in or create an account
         </p>
       </div>
       <div className="flex items-center justify-center py-5 lg:py-12">
-        <div className=" w-[87vw] py-8 px-4 lg:w-[45vw] xl:w-[543px] lg:h-[70vh] mx-auto lg:px-8 xl:px-[44px] bg-[#F6F7F8] shadow-lg grid">
-          {step === 1 && (
-            <>
-              <div className="grid gap-2">
-                <p className="text-balance text-muted-foreground text-sm lg:text-base">
-                  Step 1 of 2
+        <div className="w-[87vw] py-8 px-4 lg:w-[45vw] xl:w-[543px] mx-auto lg:px-8 xl:px-[44px] bg-[#F6F7F8] shadow-lg grid">
+          <div className="grid gap-2">
+            <h1 className="text-xl lg:text-3xl font-bold">Create an account</h1>
+            <Button variant="outline" className="w-full mt-4">
+              <Image
+                src="/images/google-logo.svg"
+                alt="google logo"
+                className="mr-2"
+                width={24}
+                height={24}
+              />
+              Continue with Google
+            </Button>
+          </div>
+          <div className="flex gap-5 items-center my-4">
+            <Image
+              src="/images/hr-line.svg"
+              className="lg:w-[186px] w-[120px] mx-auto"
+              alt="horizontal line"
+              width={175}
+              height={0}
+            />
+            <p className="text-balance text-muted-foreground">Or</p>
+            <Image
+              src="/images/hr-line.svg"
+              className="lg:w-[186px] w-[120px] mx-auto"
+              alt="horizontal line"
+              width={175}
+              height={0}
+            />
+          </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(signup)} className="grid gap-4">
+              <FormField
+                control={form.control}
+                name="businessName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Business Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your business name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="m@example.com"
+                        type="email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input placeholder="*******" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input placeholder="*******" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <p className="text-xs">
+                By clicking Create account, I agree that I have read and
+                accepted the 
+                <span className="text-primary">
+                  <Link href="">Terms of Use</Link>
+                </span>
+                 and 
+                <span className="text-primary">
+                  <Link href="">Privacy Policy.</Link>
+                </span>
+              </p>
+              <div className="lg:flex items-center">
+                <p className="text-xs lg:text-sm text-muted-foreground text-center lg:text-start">
+                  Already have an account?{" "}
+                  <span>
+                    <Link
+                      href="/auth/login"
+                      className="text-primary font-semibold"
+                    >
+                      Sign in here
+                    </Link>
+                  </span>
                 </p>
-                <h1 className="text-xl lg:text-3xl font-bold">
-                  Create an account
-                </h1>
-                <Button variant="outline" className="w-full mt-4">
-                  <Image
-                    src="/images/google-logo.svg"
-                    alt="google logo"
-                    className="mr-2"
-                    width={24}
-                    height={24}
-                  />
-                  Continue with Google
+                <Button
+                  type="submit"
+                  className="w-full lg:w-fit mt-4 lg:mt-0 rounded-full ms-auto"
+                  disabled={loading}
+                >
+                  {loading ? "Creating account..." : "Create account"}
                 </Button>
               </div>
-              <div className="flex gap-5 items-center">
-                <Image
-                  src="/images/hr-line.svg"
-                  className="lg:w-[186px] w-[120px] mx-auto"
-                  alt="horizontal line"
-                  width={175}
-                  height={0}
-                />
-                <p className="text-balance text-muted-foreground">Or</p>
-                <Image
-                  src="/images/hr-line.svg"
-                  className="lg:w-[186px] w-[120px] mx-auto"
-                  alt="horizontal line"
-                  width={175}
-                  height={0}
-                />
-              </div>
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <Link
-                      href="/forgot-password"
-                      className="ml-auto inline-block text-sm underline"
-                    >
-                      Forgot your password?
-                    </Link>
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    placeholder="*******"
-                  />
-                </div>
-                <div className="lg:flex items-center">
-                  <p className="text-xs lg:text-sm text-muted-foreground text-center lg:text-start">
-                    Already have an account?{" "}
-                    <span>
-                      <Link
-                        href="/auth/login"
-                        className="text-primary font-semibold"
-                      >
-                        Sign in here
-                      </Link>
-                    </span>
-                  </p>
-                  <Button
-                    onClick={handleNextStep}
-                    className="lg:w-[105px] w-full mt-4 lg:mt-0 rounded-full ms-auto"
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
-          {step === 2 && (
-            <>
-              <div className="grid gap-2">
-                <p className="text-balance text-muted-foreground text-sm lg:text-base">
-                  Step 2 of 2
-                </p>
-                <h1 className="text-xl lg:text-3xl font-bold">
-                  Welcome to Revela
-                </h1>
-                <p className="text-muted-foreground">
-                  Please take a moment to complete your account
-                </p>
-              </div>
-              <div className="grid gap-6 lg:mt-4">
-                <div className="flex gap-2">
-                  <div className="grid gap-2 w-full">
-                    <Label htmlFor="firstName">Business Name</Label>
-                    <Input
-                      id="firstName"
-                      type="text"
-                      placeholder="John"
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-2 w-full">
-                    <Label htmlFor="lastName">Business Email</Label>
-                    <Input
-                      id="lastName"
-                      type="text"
-                      placeholder="Doe"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <div className="grid gap-2  w-full">
-                    <Label htmlFor="phone">Business Certificate</Label>
-                    <Input
-                      id="picture"
-                      type="file"
-                      className="text-muted-foreground"
-                    />
-                  </div>
-                  <div className="grid gap-2  w-full">
-                    <Label htmlFor="phone">Confirm Password</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="*******"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="phone">Upload Logo</Label>
-                  <Input
-                    id="picture"
-                    type="file"
-                    className="text-muted-foreground"
-                  />
-                </div>
-                <p className="text-xs">
-                  Revela may keep me informed with personalized emails about
-                  products and services. See our 
-                  <span className="text-primary">
-                    <Link href="">Privacy Policy</Link>
-                  </span>
-                   for more details or to opt-out at any time.
-                </p>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" />
-                  <label
-                    htmlFor="terms"
-                    className="text-sm text-primary leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Please contact me via email
-                  </label>
-                </div>
-                <p className="text-xs">
-                  By clicking Create account, I agree that I have read and
-                  accepted the <span className="text-primary"><Link href="">Terms of Use</Link></span>
-                   and <span className="text-primary"><Link href="">Privacy Policy.</Link></span>
-                </p>
-                <div className="lg:flex items-center">
-                  <Button
-                    onClick={handlePrevStep}
-                    className="lg:w-[105px] w-full mt-4 lg:mt-0 rounded-full"
-                  >
-                    Back
-                  </Button>
-                  <Button
-                    type="submit"
-                    className="lg:w-[147px] w-full mt-4 lg:mt-0 rounded-full ms-auto"
-                  >
-                    Create account
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
+            </form>
+          </Form>
         </div>
       </div>
       <div className="hidden bg-muted lg:flex flex-col items-center justify-center">
