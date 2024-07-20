@@ -13,8 +13,8 @@ export default function Scan() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <div className="flex w-[54.26vw] mx-auto justify-center items-center">
-          <Button className="rounded-full text-2xl p-8">
+        <div className="flex ms-auto justify-center items-center">
+          <Button className="rounded-2xl text-2xl p-8">
             <ScanFace className="w-10 h-10 mr-2" />
             Start Scanning
           </Button>

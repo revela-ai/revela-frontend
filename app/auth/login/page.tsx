@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,11 +9,20 @@ import { Toaster, toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import RevelaLogo from "@/components/shared/logo";
+import { useToast } from "@/components/ui/use-toast";
 
-const API_ENDPOINT = "https://quantum-backend-sxxx.onrender.com/accounts/signin/";
+const API_ENDPOINT =
+  "https://quantum-backend-sxxx.onrender.com/accounts/signin/";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -24,6 +33,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function Login() {
   const router = useRouter();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
   const form = useForm<FormData>({
@@ -53,10 +63,10 @@ export default function Login() {
         router.push("/dashboard");
       } else {
         const errorData = await response.json();
-        toast.error(errorData);
+        toast({ title: errorData });
       }
     } catch (error) {
-      toast.error("An error occurred during login, verify your internet");
+      toast({ title: "An error occurred during login, verify your internet" });
     } finally {
       setLoading(false);
     }
@@ -64,7 +74,6 @@ export default function Login() {
 
   return (
     <div className="w-full lg:grid min-h-screen lg:grid-cols-2">
-      <Toaster richColors />
       <div className="lg:hidden flex flex-col justify-center items-center mt-[5vh] lg:mt-0">
         <RevelaLogo />
         <p className="mt-4 text-muted-foreground">

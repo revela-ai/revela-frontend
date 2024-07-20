@@ -20,6 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import ProfileCard from "./profile-card";
 
 const DashboardSidebar: React.FC = () => {
   return (
@@ -44,40 +45,7 @@ const DashboardSidebar: React.FC = () => {
             </SideNavItem>
           </nav>
         </div>
-        <div className="mt-auto p-4">
-          <div className=" border rounded-md shadow-lg p-4 flex items-center">
-            <CircleUser />
-            <div className="mx-auto text-muted-foreground text-xs">
-              <p className="text-primary font-semibold">Precious A.</p>
-              <p>Upgrade Plan</p>
-            </div>
-            <div className="ms-auto">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="rounded-full"
-                  >
-                    <LucideSettings />
-                    <span className="sr-only">Toggle user menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="border bg-slate-50 rounded-md p-2"
-                >
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
-                  <DropdownMenuItem>Support</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Logout</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
+        <ProfileCard/>
       </div>
     </div>
   );

@@ -24,6 +24,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import RevelaLogo from "@/components/shared/logo";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   otp: z.string().min(1, { message: "OTP is required" }),
@@ -33,6 +34,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function EmailVerification() {
   const router = useRouter();
+  const { toast } = useToast();
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
 
@@ -65,20 +67,28 @@ export default function EmailVerification() {
       if (response.ok) {
         const responseData = await response.json();
         const { access, refresh } = responseData;
-
+        localStorage.setItem("access", access);
+        localStorage.setItem("refresh", refresh);
+        toast({ title: "Your Email has been verified" });
         document.cookie = `access_token=${access}; path=/;`;
         document.cookie = `refresh_token=${refresh}; path=/;`;
 
-        toast.success("Your Email has been verified");
         setTimeout(() => {
           router.push(`/dashboard`);
         }, 2000);
       } else {
         const errorData = await response.json();
-        toast.error(`Verification failed: ${errorData.message}`);
+        toast({
+          title: `Verification failed: ${errorData.message}`,
+          description: errorData.message,
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      toast.error("An error occurred during verification");
+      toast({
+        title: "An error occurred during verification",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -88,7 +98,9 @@ export default function EmailVerification() {
     <div className="w-full lg:grid min-h-screen lg:grid-cols-2">
       <div className="lg:hidden flex flex-col justify-center items-center mt-[5vh] lg:mt-0">
         <RevelaLogo />
-        <p className="mt-2 lg:mt-4 text-muted-foreground">Verify your email to use Revela</p>
+        <p className="mt-2 lg:mt-4 text-muted-foreground">
+          Verify your email to use Revela
+        </p>
       </div>
       <div className="flex items-center justify-center py-5 lg:py-12">
         <div className="w-[87vw] py-8 px-4 lg:w-[45vw] xl:w-[543px] mx-auto lg:px-8 xl:px-[44px] bg-[#F6F7F8] shadow-lg grid">
@@ -131,7 +143,11 @@ export default function EmailVerification() {
                   )}
                 />
               </div>
-              <Button type="submit" disabled={loading} className="w-full mt-4 rounded-full">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full mt-4 rounded-full"
+              >
                 {loading ? "Verifying..." : "Verify and Create Account"}
               </Button>
               <p className="text-xs lg:text-sm text-muted-foreground text-center lg:text-start">

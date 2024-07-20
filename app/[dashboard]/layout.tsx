@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardSidebar from "@/components/shared/dashboard-sidebar";
 import MobileDashboardSidebar from "@/components/shared/mobile-dashboard-sidebar";
+import { Toaster } from '@/components/ui/toaster';
 
 export default function RootLayout({
   children,
@@ -26,6 +27,7 @@ export default function RootLayout({
       <div className="flex flex-col">
         <MobileDashboardSidebar/>
         <main>{children}</main>
+        <Toaster />
       </div>
     </div>
   );

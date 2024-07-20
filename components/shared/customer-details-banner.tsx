@@ -4,7 +4,7 @@ import React from "react";
 
 export default function CustomerDetailsBanner() {
   return (
-    <div className="hidden lg:flex w-[54.26vw] justify-between items-end h-[198px] bg-[url('/images/dashboard-image.svg')] p-8 bg-cover border rounded-2xl mx-auto">
+    <div className="hidden lg:flex w-full justify-between items-end h-[198px] bg-[url('/images/dashboard-image.svg')] p-8 bg-cover border rounded-3xl mx-auto">
       <div className="flex gap-2 items-center">
         <div className="border-2 border-black p-4 rounded-full">
           <LucideBuilding2 className="text-black" />

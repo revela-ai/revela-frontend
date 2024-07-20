@@ -7,8 +7,6 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import RevelaLogo from "@/components/shared/logo";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z
   .object({
@@ -41,6 +40,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function Signup() {
   const router = useRouter();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -72,6 +72,11 @@ export default function Signup() {
       });
 
       if (response.ok) {
+        toast({
+          title: "Account successfuly created",
+          description: "Please check your email to verify your account",
+        });
+        
         router.push(
           `/auth/email-verification?email=${encodeURIComponent(
             data.email
@@ -81,10 +86,18 @@ export default function Signup() {
         );
       } else {
         const errorData = await response.json();
-        toast.error(`Signup failed: ${errorData.message}`);
+        toast({
+          title: `Signup failed`,
+          description: errorData.message,
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      toast.error("An error occurred during signup");
+      toast({
+        title: "An error occurred during signup",
+        description: "Unable to signup. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
