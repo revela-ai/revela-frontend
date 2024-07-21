@@ -71,11 +71,17 @@ const config = {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
         },
+        "bounce-slow": {
+          "0%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-100px)" },
+          "100%": { transform: "translateY(100px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "bounce-slow": "bounce-slow 2s infinite",
       },
     },
   },

@@ -6,6 +6,9 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogTrigger,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
 } from "./ui/alert-dialog";
 import CameraScan from "./camera-scan";
 
@@ -21,10 +24,18 @@ export default function Scan() {
         </div>
       </AlertDialogTrigger>
       <AlertDialogContent>
-        <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
-            <LucideSquareX/>
-        </AlertDialogCancel>
-        <CameraScan/>
+        <AlertDialogHeader>
+          <div className="flex items-center">
+            <AlertDialogTitle>Scan Face</AlertDialogTitle>
+            <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
+              <LucideSquareX />
+            </AlertDialogCancel>
+          </div>
+          <AlertDialogDescription>
+            Select the camera icon to <span className="font-semibold">take a picture</span> or <span className="font-semibold">upload from your device</span>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <CameraScan />
       </AlertDialogContent>
     </AlertDialog>
   );
