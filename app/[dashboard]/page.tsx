@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="my-2 px-4 flex flex-col gap-8">
       <CustomerDetailsBanner />
-      <Scan />
+      <Scan className="h-10 w-10" buttonTitle="Start Scanning" buttonClass="p-8 text-2xl rounded-2xl"/>
     </div>
   );
 }

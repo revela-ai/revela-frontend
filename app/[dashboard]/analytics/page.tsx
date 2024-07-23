@@ -1,7 +1,7 @@
 import React from 'react'
 
-export default function Analytics() {
+export default function SettingsPage() {
   return (
-    <div>Analytics</div>
+    <div>SettingsPage</div>
   )
 }

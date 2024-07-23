@@ -28,6 +28,7 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { Input } from "./ui/input";
+import CustomerDetailsForm from "./customer-details-form";
 
 const API_URL = "https://quantum-backend-sxxx.onrender.com/skintone_analysis/";
 
@@ -70,6 +71,7 @@ const CameraScan: React.FC = () => {
         body: formData,
       });
       const data = await response.json();
+      console.log(response);
       setAnalysis(data);
       setProcess("analysis");
     } catch (error) {
@@ -108,50 +110,6 @@ const CameraScan: React.FC = () => {
       toast({
         title: "Error sending analysis to email",
         variant: "destructive",
-      });
-    }
-  };
-
-  const shareAnalysis = async () => {
-    try {
-      const response = await fetch(capturedImage || "");
-      const blob = await response.blob();
-
-      const file = new File([blob], "image.jpg", { type: "image/jpeg" });
-
-      const formData = new FormData();
-      formData.append("image", file);
-
-      const apiResponse = await fetch(
-        "https://revela.onrender.com/imagebanner/",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (apiResponse.ok) {
-        const resultBlob = await apiResponse.blob();
-        const url = window.URL.createObjectURL(resultBlob);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        a.download = "shared_analysis.png";
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        toast({
-          title: "Image downloaded successfully!",
-        });
-      } else {
-        toast({
-          title: "Failed to generate shared analysis image",
-          variant: "destructive",
-        });
-      }
-    } catch {
-      toast({
-        title: "An error occurred while sharing the analysis",
       });
     }
   };
@@ -253,12 +211,7 @@ const CameraScan: React.FC = () => {
                   </AlertDialogCancel>
                 </div>
                 <AlertDialogDescription>
-                  <AnalysisView
-                    analysis={analysis}
-                    email={email}
-                    setEmail={setEmail}
-                    sendAnalysisByEmail={sendAnalysisByEmail}
-                  />
+                  <AnalysisView analysis={analysis} />
                   <div className="flex items-center gap-2">
                     <Input
                       type="email"
@@ -271,8 +224,8 @@ const CameraScan: React.FC = () => {
                       onClick={sendAnalysisByEmail}
                       className="bg-transparent border border-primary text-primary hover:text-white"
                     >
-                      <MailIcon className="w-5 h-5 mr-2"/>
-                      Send to Email
+                      <MailIcon className="w-5 h-5 mr-2" />
+                      {processing ? "Sending mail" : "Send to Email"}
                     </Button>
                   </div>
                   <div className="flex gap-4 mt-4">
@@ -283,12 +236,28 @@ const CameraScan: React.FC = () => {
                       <Redo2Icon className="w-5 h-5 mr-2" />
                       Retake Analysis
                     </Button>
-                    <Button
-                      className="rounded-full"
-                    >
-                      <PlusIcon className="w-5 h-5 mr-2" />
-                      Assign to customer
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button className="rounded-full">
+                          <PlusIcon className="w-5 h-5 mr-2" />
+                          Assign to customer
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <div className="flex items-center">
+                            <AlertDialogTitle>Customer Details</AlertDialogTitle>
+                            <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
+                              <LucideSquareX />
+                            </AlertDialogCancel>
+                          </div>
+                          <AlertDialogDescription>
+                            Please take a moment to input your details
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <CustomerDetailsForm />
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>

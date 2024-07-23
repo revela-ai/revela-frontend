@@ -3,32 +3,40 @@
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
+import { Bell, HomeIcon, LineChart, Menu, Package, Users } from "lucide-react";
 import {
-  Bell,
-  CircleUser,
-  HomeIcon,
-  LineChart,
-  LucideSettings,
-  Menu,
-  Package,
-  Search,
-  Users,
-} from "lucide-react";
-import { Input } from "../ui/input";
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import RevelaLogo from "./logo";
+import SideNavItem from "./side-nav-item";
+import ProfileCard from "./profile-card";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
+  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { DropdownMenuContent } from "@radix-ui/react-dropdown-menu";
-import RevelaLogo from "./logo";
-import SideNavItem from "./side-nav-item";
-import ProfileCard from "./profile-card";
 
 export default function MobileDashboardSidebar() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Generate breadcrumb items based on the current pathname
+  const pathSegments = pathname?.split("/").filter(Boolean) || [];
+  const breadcrumbItems = pathSegments.map((segment, index) => {
+    const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
+    return { href, label: segment.charAt(0).toUpperCase() + segment.slice(1) };
+  });
+
   return (
     <header className="flex h-14 items-center gap-4 border-b lg:border bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet open={isSidebarOpen} onOpenChange={setSidebarOpen}>
@@ -36,7 +44,7 @@ export default function MobileDashboardSidebar() {
           <Button
             variant="outline"
             size="icon"
-            className="shrink-0 md:hidden"
+            className="shrink-0 xl:hidden"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="h-5 w-5" />
@@ -68,7 +76,7 @@ export default function MobileDashboardSidebar() {
               Customers
             </SideNavItem>
             <SideNavItem
-              href="/dashboard/analytics"
+              href="/dashboard/user-settings"
               icon={LineChart}
               onClick={() => setSidebarOpen(false)}
             >
@@ -78,10 +86,56 @@ export default function MobileDashboardSidebar() {
           <ProfileCard />
         </SheetContent>
       </Sheet>
-      <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-        <Bell className="h-4 w-4" />
-        <span className="sr-only">Toggle notifications</span>
-      </Button>
+      <Breadcrumb className="hidden md:flex">
+        <BreadcrumbList>
+          {breadcrumbItems.length === 0 ? (
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          ) : (
+            breadcrumbItems.map((item, index) => (
+              <React.Fragment key={item.href}>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link href={item.href}>{item.label}</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                {index < breadcrumbItems.length - 1 && <BreadcrumbSeparator />}
+              </React.Fragment>
+            ))
+          )}
+        </BreadcrumbList>
+      </Breadcrumb>
+      <div className="ml-auto flex gap-2">
+        <Button variant="outline" size="icon" className="h-8 w-8 self-center">
+          <Bell className="h-4 w-4" />
+          <span className="sr-only">Toggle notifications</span>
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="overflow-hidden rounded-full"
+            >
+              <Avatar>
+                <AvatarImage src="" alt="profile image" />
+                <AvatarFallback>P</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-white rounded-md p-2">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   );
 }

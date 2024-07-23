@@ -12,6 +12,6 @@ export interface Analysis {
     skin_age: [string, number];
     skin_acne: [string, number];
     skin_wrinkle: [string, number];
-    analysis_id: [string, number];
+    analysis_id: number;
   }
   

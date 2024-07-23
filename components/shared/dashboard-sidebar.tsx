@@ -12,14 +12,6 @@ import React from "react";
 import { Button } from "../ui/button";
 import RevelaLogo from "./logo";
 import SideNavItem from "./side-nav-item";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import ProfileCard from "./profile-card";
 
 const DashboardSidebar: React.FC = () => {
@@ -34,14 +26,14 @@ const DashboardSidebar: React.FC = () => {
             <SideNavItem href="/dashboard" icon={LayoutDashboardIcon}>
               Dashboard
             </SideNavItem>
-            <SideNavItem href="/dashboard/products" icon={Package}>
-              Products
-            </SideNavItem>
             <SideNavItem href="/dashboard/customers" icon={Users}>
               Customers
             </SideNavItem>
-            <SideNavItem href="/dashboard/analytics" icon={LineChart}>
-              Analytics
+            <SideNavItem href="/dashboard/products" icon={Package}>
+              Products
+            </SideNavItem>
+            <SideNavItem href="/dashboard/user-settings" icon={LucideSettings}>
+              Settings
             </SideNavItem>
           </nav>
         </div>

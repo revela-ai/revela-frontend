@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Analysis } from "@/types";
 import { useRouter } from "next/navigation";
 import { useToast } from "./ui/use-toast";
@@ -11,27 +11,26 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Progress } from "./ui/progress";
+import { useAnalysis } from "@/context/analysis-context";
 
 type Props = {
   analysis: Analysis;
-  email: string;
-  setEmail: (email: string) => void;
-  sendAnalysisByEmail: () => void;
 };
 
-const AnalysisView: React.FC<Props> = ({
-  analysis,
-  email,
-  setEmail,
-  sendAnalysisByEmail,
-}) => {
+const AnalysisView: React.FC<Props> = ({ analysis }) => {
   const { faces, skin_type, skin_age, skin_acne, skin_wrinkle } = analysis;
-  const dominantColors = faces[0].dominant_colors;
+  const { setAnalysis } = useAnalysis();
   const [feedbackDone, setFeedbackState] = useState(true);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(1);
   const router = useRouter();
   const { toast } = useToast();
+
+  useEffect(() => {
+    setAnalysis(analysis);
+  }, [analysis, setAnalysis]);
+
+  console.log(`current analysis id: ${analysis.analysis_id}`)
 
   const sendFeedback = async () => {
     if (rating === null || !analysis) {
@@ -60,9 +59,6 @@ const AnalysisView: React.FC<Props> = ({
       if (!response.ok) {
         throw new Error("Error sending feedback");
       }
-
-      // const data = await response.json();
-      // console.log(data);
       toast({ title: "Thanks for your feedback!" });
       setFeedbackState(false);
       setTimeout(() => {
@@ -76,6 +72,7 @@ const AnalysisView: React.FC<Props> = ({
       });
     }
   };
+
 
   return (
     <section>

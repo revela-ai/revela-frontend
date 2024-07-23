@@ -34,8 +34,12 @@ export default function ProfileCard() {
   const handleLogout = async () => {
     try {
       const csrfToken = getCookie("csrftoken");
-      const refreshToken = localStorage.getItem("refresh_token");
-      const accessToken = localStorage.getItem("access_token");
+      const accessToken = getCookie("access_token");
+      const refreshToken = getCookie("refresh_token");
+
+      console.log(csrfToken);
+      console.log(accessToken);
+      console.log(refreshToken);
 
       const headers: HeadersInit = {
         "Content-Type": "application/json",
@@ -60,8 +64,6 @@ export default function ProfileCard() {
       );
 
       if (response.ok) {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
         document.cookie =
           "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
         document.cookie =
@@ -74,7 +76,7 @@ export default function ProfileCard() {
 
         setTimeout(() => {
           router.push("/auth/login");
-        }, 500);
+        }, 3000);
       } else {
         toast({
           title: "Logout failed",

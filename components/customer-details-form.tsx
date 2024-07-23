@@ -1,11 +1,8 @@
-"use client"
-
-import React from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Select from "react-select";
-
 import countries from "world-countries";
 import {
   Form,
@@ -17,9 +14,25 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useAnalysis } from "@/context/analysis-context";
+
+const getCookie = (name: string) => {
+  let cookieValue = "";
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + "=")) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+};
 
 const countryOptions = countries.map((country) => ({
-  value: country.cca2,
+  value: country.name.common,
   label: country.name.common,
 }));
 
@@ -29,22 +42,22 @@ type CountryOption = {
 };
 
 const formSchema = z.object({
-  username: z.string().min(2, {
+  name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
   email: z.string().email({
     message: "Invalid email address.",
   }),
-  phone: z.string().regex(/^\d{10}$/, {
+  telephone: z.string().regex(/^\d{10}$/, {
     message: "Phone number must be exactly 10 digits.",
   }),
-  dob: z.string().min(1, {
+  date_of_birth: z.string().min(1, {
     message: "Date of Birth is required.",
   }),
   address: z.string().min(1, {
     message: "Address is required.",
   }),
-  country: z
+  country_of_origin: z
     .object({
       value: z.string(),
       label: z.string(),
@@ -53,28 +66,71 @@ const formSchema = z.object({
 });
 
 export default function CustomerDetailsForm() {
+  const { analysis } = useAnalysis();
+  const analysis_id = analysis?.analysis_id
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
-      phone: "",
-      dob: "",
+      telephone: "",
+      date_of_birth: "",
       address: "",
-      country: null,
+      country_of_origin: null,
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  console.log(`Current Analysis Id: ${analysis_id}`);
+
+  const accessToken = getCookie("access_token");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const API_ENDPOINT = "https://quantum-backend-sxxx.onrender.com/customers/";
+    if (!analysis_id) {
+      console.error("No analysis ID available");
+      return;
+    }
+
+    const dataToSend = {
+      analysis_id,
+      ...values,
+      country_of_origin: values.country_of_origin
+        ? values.country_of_origin.value
+        : null,
+    };
+
+    try {
+      setIsLoading(true);
+      const response = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken})}`,
+        },
+        body: JSON.stringify(dataToSend),
+      });
+      if (!response.ok) {
+        console.log("Failed to send form");
+        throw new Error("Failed to submit form");
+      }
+      const responseData = await response.json();
+      console.log(`Success: ${responseData}`);
+      const storedCustomers = JSON.parse(localStorage.getItem("customers") || "[]");
+      storedCustomers.push({ ...responseData, analysis});
+      localStorage.setItem("customers", JSON.stringify(storedCustomers));
+      window.location.reload();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      console.error(dataToSend);
+      console.error(accessToken);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="p-8 lg:w-[45vw] bg-muted/40 shadow-lg rounded-lg">
-      <h2 className="lg:text-3xl">Customer Details</h2>
-      <p className="text-muted-foreground">
-        Please take a moment to input your details
-      </p>
+    <div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -83,7 +139,7 @@ export default function CustomerDetailsForm() {
           <div className="flex gap-4">
             <FormField
               control={form.control}
-              name="username"
+              name="name"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>Full Name</FormLabel>
@@ -111,7 +167,7 @@ export default function CustomerDetailsForm() {
           <div className="flex gap-4">
             <FormField
               control={form.control}
-              name="phone"
+              name="telephone"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>Contact Number</FormLabel>
@@ -124,12 +180,12 @@ export default function CustomerDetailsForm() {
             />
             <FormField
               control={form.control}
-              name="dob"
+              name="date_of_birth"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>Date of Birth</FormLabel>
                   <FormControl>
-                    <Input placeholder="1/11/1111" {...field} />
+                    <Input placeholder="1-11-1111" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -152,7 +208,7 @@ export default function CustomerDetailsForm() {
             />
             <FormField
               control={form.control}
-              name="country"
+              name="country_of_origin"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>Country of Origin</FormLabel>
@@ -164,7 +220,10 @@ export default function CustomerDetailsForm() {
                       classNamePrefix="react-select"
                       className="text-sm text-muted-foreground"
                       onChange={(value) =>
-                        form.setValue("country", value as CountryOption | null)
+                        form.setValue(
+                          "country_of_origin",
+                          value as CountryOption | null
+                        )
                       }
                     />
                   </FormControl>
@@ -174,8 +233,12 @@ export default function CustomerDetailsForm() {
             />
           </div>
           <div className="text-center">
-            <Button type="submit" className="rounded-full lg:w-[323px] mx-auto">
-              View Results
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="rounded-full lg:w-[323px] mx-auto"
+            >
+              {isLoading ? "Adding Customer..." : "Add Customer"}
             </Button>
           </div>
         </form>

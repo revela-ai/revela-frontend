@@ -11,19 +11,19 @@ const noticeLists = [
 
 export default function Notice() {
   return (
-    <div>
-      <h1 className="text-muted-foreground font-bold">
+    <>
+      <span className="text-muted-foreground font-bold">
         Photo Guidelines for Accurate Analysis
-      </h1>
+      </span>
 
       {noticeLists.map((noticeList, index) => (
         <div key={index} className="flex items-center">
           <Dot />
-          <p key={index} className="text-sm font-light text-muted-foreground">
+          <span key={index} className="text-sm font-light text-muted-foreground">
             {noticeList}
-          </p>
+          </span>
         </div>
       ))}
-    </div>
+    </>
   );
 }

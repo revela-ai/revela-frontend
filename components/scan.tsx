@@ -11,15 +11,22 @@ import {
   AlertDialogDescription,
 } from "./ui/alert-dialog";
 import CameraScan from "./camera-scan";
+import clsx from "clsx";
 
-export default function Scan() {
+interface ScanProps {
+  className?: string;
+  buttonTitle?: string;
+  buttonClass?: string;
+}
+
+const Scan: React.FC<ScanProps> = ({ className, buttonTitle, buttonClass }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <div className="flex ms-auto justify-center items-center">
-          <Button className="rounded-2xl text-2xl p-8">
-            <ScanFace className="w-10 h-10 mr-2" />
-            Start Scanning
+          <Button className={`${clsx(buttonClass)}`}>
+            <ScanFace className={`${clsx(className)} mr-2`} />
+            {buttonTitle}
           </Button>
         </div>
       </AlertDialogTrigger>
@@ -32,11 +39,15 @@ export default function Scan() {
             </AlertDialogCancel>
           </div>
           <AlertDialogDescription>
-            Select the camera icon to <span className="font-semibold">take a picture</span> or <span className="font-semibold">upload from your device</span>
+            Select the camera icon to{" "}
+            <span className="font-semibold">take a picture</span> or{" "}
+            <span className="font-semibold">upload from your device</span>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <CameraScan />
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+};
+
+export default Scan;

@@ -60,7 +60,14 @@ export default function Login() {
         document.cookie = `access_token=${access}; path=/;`;
         document.cookie = `refresh_token=${refresh}; path=/;`;
 
-        router.push("/dashboard");
+        toast({
+          title: "Successfully logged in",
+          
+        });
+
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 3000);
       } else {
         const errorData = await response.json();
         toast({ title: errorData });
