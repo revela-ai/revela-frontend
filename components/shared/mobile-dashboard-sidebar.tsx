@@ -16,7 +16,7 @@ import SideNavItem from "./side-nav-item";
 import ProfileCard from "./profile-card";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,17 +25,84 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useToast } from "../ui/use-toast";
+import { getCookie } from "@/utils/utils";
 
 export default function MobileDashboardSidebar() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
-
-  // Generate breadcrumb items based on the current pathname
   const pathSegments = pathname?.split("/").filter(Boolean) || [];
   const breadcrumbItems = pathSegments.map((segment, index) => {
     const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
     return { href, label: segment.charAt(0).toUpperCase() + segment.slice(1) };
   });
+
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      const csrfToken = getCookie("csrftoken");
+      const accessToken = getCookie("access_token");
+      const refreshToken = getCookie("refresh_token");
+
+      console.log(csrfToken);
+      console.log(accessToken);
+      console.log(refreshToken);
+
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (csrfToken) {
+        headers["X-CSRFToken"] = csrfToken;
+      }
+
+      if (accessToken) {
+        headers["Authorization"] = `Bearer ${accessToken}`;
+      }
+
+      const response = await fetch(
+        "https://quantum-backend-sxxx.onrender.com/accounts/logout/",
+        {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({ refresh: refreshToken }),
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        document.cookie =
+          "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+        document.cookie =
+          "refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+
+        toast({
+          title: "Successfully logged out",
+          description: "You will be redirected shortly.",
+        });
+
+        setTimeout(() => {
+          router.push("/auth/login");
+        }, 3000);
+      } else {
+        toast({
+          title: "Logout failed",
+          description: "Unable to log out. Please try again.",
+          variant: "destructive",
+        });
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      toast({
+        title: "An error occurred",
+        description: "An error occurred during logout. Please try again.",
+        variant: "destructive",
+      });
+      console.error("An error occurred during logout", error);
+    }
+  };
 
   return (
     <header className="flex h-14 items-center gap-4 border-b lg:border bg-muted/40 px-4 lg:h-[60px] lg:px-6">
@@ -132,7 +199,7 @@ export default function MobileDashboardSidebar() {
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

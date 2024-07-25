@@ -18,7 +18,7 @@ const getCookie = (name: string) => {
   return cookieValue;
 };
 interface ScansResponse {
-  totalScans: number;
+  total_scans: number;
 }
 
 export default function CustomerDetailsBanner() {
@@ -40,7 +40,7 @@ export default function CustomerDetailsBanner() {
         }
 
         const response = await fetch(
-          "https://quantum-backend-sxxx.onrender.com/dashboard/scans/total",
+          "https://quantum-backend-sxxx.onrender.com/dashboard/scans/total/",
           {
             method: "GET",
             headers: headers,
@@ -52,13 +52,14 @@ export default function CustomerDetailsBanner() {
         }
 
         const data: ScansResponse = await response.json();
-        setTotalScans(data.totalScans);
+        setTotalScans(data.total_scans);
+        console.log(`Total: ${data.total_scans}`)
+        console.log(accessToken)
       } catch (error) {
         console.error("Failed to fetch total scans:", error);
       }
     };
 
-    // Fetch products and customers from local storage
     const savedProducts = JSON.parse(
       localStorage.getItem("bulkProducts") || "[]"
     );

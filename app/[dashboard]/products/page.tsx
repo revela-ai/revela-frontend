@@ -49,6 +49,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import BatchImport from "@/components/batch-import-product";
 import { Input } from "@/components/ui/input";
+import AddSingleProduct from "@/components/add-single-product";
 
 interface Product {
   "Product Name": string;
@@ -107,7 +108,10 @@ export default function Products() {
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <div className="flex ms-auto justify-center items-center">
-                  <Button size="sm" className="h-8 gap-1">
+                  <Button
+                    size="sm"
+                    className="h-8 gap-1 bg-transparent border border-primary text-primary hover:text-white hover:bg-primary"
+                  >
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       Add Product
@@ -124,19 +128,16 @@ export default function Products() {
                     </AlertDialogCancel>
                   </div>
                   <AlertDialogDescription>
-                    Please take a moment to input your details
+                    Fill the form below to add your products one by one
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <CustomerDetailsForm />
+                <AddSingleProduct/>
               </AlertDialogContent>
             </AlertDialog>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <div className="flex ms-auto justify-center items-center">
-                  <Button
-                    size="sm"
-                    className="h-8 gap-1 bg-transparent border border-primary text-primary hover:text-white hover:bg-primary"
-                  >
+                  <Button size="sm" className="h-8 gap-1">
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       Batch Import Products
