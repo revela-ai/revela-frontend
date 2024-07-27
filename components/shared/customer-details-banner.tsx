@@ -1,32 +1,33 @@
 "use client";
 
+import { fetchBusinessDetails, getCookie } from "@/utils/utils";
 import { LucideBuilding2, LucidePackage, LucideScanFace } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-const getCookie = (name: string) => {
-  let cookieValue = "";
-  if (document.cookie && document.cookie !== "") {
-    const cookies = document.cookie.split(";");
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.startsWith(name + "=")) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-};
 interface ScansResponse {
   total_scans: number;
+}
+
+interface Business {
+  email: string;
+  name: string;
+  website: string | null;
+  registration: string | null;
+  referal_link: string | null;
+  is_active: boolean;
+  is_verified: boolean;
 }
 
 export default function CustomerDetailsBanner() {
   const [totalScans, setTotalScans] = useState<number>(0);
   const [products, setProducts] = useState<number>(0);
   const [customers, setCustomers] = useState<number>(0);
+  const [businessName, setBusinessName] = useState<string>("");
 
   useEffect(() => {
+    const email = localStorage.getItem("userEmail");
+    console.log(`Email prop received: ${email}`);
+
     const fetchTotalScans = async () => {
       try {
         const accessToken = getCookie("access_token");
@@ -53,8 +54,6 @@ export default function CustomerDetailsBanner() {
 
         const data: ScansResponse = await response.json();
         setTotalScans(data.total_scans);
-        console.log(`Total: ${data.total_scans}`)
-        console.log(accessToken)
       } catch (error) {
         console.error("Failed to fetch total scans:", error);
       }
@@ -67,10 +66,31 @@ export default function CustomerDetailsBanner() {
       localStorage.getItem("customers") || "[]"
     );
 
+    const fetchBusinessName = async (email: string) => {
+      try {
+        const storedBusiness = localStorage.getItem("businessDetails");
+        if (storedBusiness) {
+          const businessDetails: Business = JSON.parse(storedBusiness);
+          setBusinessName(businessDetails.name);
+        } else {
+          const businessDetails = await fetchBusinessDetails(email);
+          localStorage.setItem("businessDetails", JSON.stringify(businessDetails));
+          setBusinessName(businessDetails.name);
+        }
+      } catch (error) {
+        console.error("Failed to fetch business details:", error);
+      }
+    };
+
     setProducts(savedProducts.length);
     setCustomers(savedCustomers.length);
 
-    fetchTotalScans();
+    if (email) {
+      fetchTotalScans();
+      fetchBusinessName(email);
+    } else {
+      console.error("Email is null, cannot fetch business details");
+    }
   }, []);
 
   return (
@@ -80,7 +100,7 @@ export default function CustomerDetailsBanner() {
           <LucideBuilding2 className="text-black" />
         </div>
         <div>
-          <p className="font-bold">Luxury Spa</p>
+          <p className="font-bold">{businessName}</p>
           <p className="text-sm">North Legon</p>
         </div>
       </div>

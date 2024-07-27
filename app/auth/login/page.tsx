@@ -59,6 +59,7 @@ export default function Login() {
 
         document.cookie = `access_token=${access}; path=/;`;
         document.cookie = `refresh_token=${refresh}; path=/;`;
+        localStorage.setItem("userEmail", values.email);
 
         toast({
           title: "Successfully logged in",

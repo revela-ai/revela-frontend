@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Bell, HomeIcon, LineChart, Menu, Package, Users } from "lucide-react";
@@ -30,6 +30,7 @@ import { getCookie } from "@/utils/utils";
 
 export default function MobileDashboardSidebar() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [avatarFallback, setAvatarFallback] = useState<string>("P"); // Default fallback
   const pathname = usePathname();
   const pathSegments = pathname?.split("/").filter(Boolean) || [];
   const breadcrumbItems = pathSegments.map((segment, index) => {
@@ -40,15 +41,24 @@ export default function MobileDashboardSidebar() {
   const router = useRouter();
   const { toast } = useToast();
 
+  useEffect(() => {
+    // Retrieve the business name from local storage
+    const storedBusiness = localStorage.getItem("businessDetails");
+    if (storedBusiness) {
+      const businessDetails = JSON.parse(storedBusiness);
+      const businessName = businessDetails.name;
+      if (businessName) {
+        // Set the first letter of the business name as the avatar fallback
+        setAvatarFallback(businessName.charAt(0).toUpperCase());
+      }
+    }
+  }, []);
+
   const handleLogout = async () => {
     try {
       const csrfToken = getCookie("csrftoken");
       const accessToken = getCookie("access_token");
       const refreshToken = getCookie("refresh_token");
-
-      console.log(csrfToken);
-      console.log(accessToken);
-      console.log(refreshToken);
 
       const headers: HeadersInit = {
         "Content-Type": "application/json",
@@ -189,7 +199,7 @@ export default function MobileDashboardSidebar() {
             >
               <Avatar>
                 <AvatarImage src="" alt="profile image" />
-                <AvatarFallback>P</AvatarFallback>
+                <AvatarFallback>{avatarFallback}</AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
