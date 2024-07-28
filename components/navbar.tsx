@@ -127,10 +127,10 @@ export default function NavigationBar() {
                     <div className="flex items-center">
                       <AlertDialogTitle>Scan Face</AlertDialogTitle>
                       <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
-                        <LucideSquareX />
+                        <LucideSquareX/>
                       </AlertDialogCancel>
                     </div>
-                    <AlertDialogDescription>
+                    <AlertDialogDescription className="text-start">
                       Select the camera icon to{" "}
                       <span className="font-semibold">take a picture</span> or{" "}
                       <span className="font-semibold">

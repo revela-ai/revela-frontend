@@ -38,7 +38,7 @@ const Scan: React.FC<ScanProps> = ({ className, buttonTitle, buttonClass }) => {
               <LucideSquareX />
             </AlertDialogCancel>
           </div>
-          <AlertDialogDescription>
+          <AlertDialogDescription className="text-start">
             Select the camera icon to{" "}
             <span className="font-semibold">take a picture</span> or{" "}
             <span className="font-semibold">upload from your device</span>

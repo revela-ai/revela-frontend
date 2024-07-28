@@ -171,9 +171,9 @@ const CameraScan: React.FC = () => {
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <div className="flex items-center">
-                        <AlertDialogTitle>Scan Face</AlertDialogTitle>
+                        <AlertDialogTitle>Scanning Face</AlertDialogTitle>
                         <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
-                          <LucideSquareX />
+                          <LucideSquareX/>
                         </AlertDialogCancel>
                       </div>
                     </AlertDialogHeader>

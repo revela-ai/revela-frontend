@@ -82,7 +82,7 @@ export default function Login() {
 
   return (
     <div className="w-full lg:grid min-h-screen lg:grid-cols-2">
-      <div className="lg:hidden flex flex-col justify-center items-center mt-[5vh] lg:mt-0">
+      <div className="lg:hidden flex flex-col justify-center items-center mt-[10vh] lg:mt-0">
         <RevelaLogo />
         <p className="mt-4 text-muted-foreground">
           Sign in or create an account
