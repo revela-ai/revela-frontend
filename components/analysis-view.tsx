@@ -85,10 +85,7 @@ const AnalysisView: React.FC<Props> = ({ analysis }) => {
               <span className="font-bold text-black">{skin_age[0]}</span> years
               old
               <p>
-                As people age, it&apos;s natural to experience thinner, drier
-                skin and an increase in wrinkles. However, your environment and
-                lifestyle choices can sometimes cause your skin to age
-                prematurely.
+                {skin_age[2]}
               </p>
             </AccordionContent>
           </AccordionItem>
@@ -130,9 +127,7 @@ const AnalysisView: React.FC<Props> = ({ analysis }) => {
                   {skin_type[1] * 100}%
                 </Progress>
                 <p>
-                  {skin_type[0]} skin feels like rough patches of your skin that
-                  can flake or look scaly. If your skin is dry, it may or may
-                  not be itchy (pruritis).
+                  {skin_type[2]}
                 </p>
               </div>
             </AccordionContent>
@@ -144,14 +139,12 @@ const AnalysisView: React.FC<Props> = ({ analysis }) => {
                 <div>
                   <p className="text-black">Skin Acne : {skin_acne[0]}{" "}</p>
                   <Progress value={skin_acne[1] * 100} />
-                  <p className="mt-2 text-black">Skin Wrinkle : {skin_wrinkle[0]}{" "}</p>
+                  <p className="mt-2">{skin_acne[2]}</p>
+                  <p className="mt-2 text-black">Aging : {skin_wrinkle[0]}{" "}</p>
                   <Progress value={skin_wrinkle[1] * 100} />
                 </div>
-                <p className="mt-4">
-                  Your skin—the body&apos;s biggest organ—shields you from the
-                  elements. However, you can sometimes still develop skin
-                  conditions, or various problems with your skin.(eczema,
-                  psoriasis, hives, and vitiligo)
+                <p className="mt-2">
+                  {skin_wrinkle[2]}
                 </p>
               </div>
             </AccordionContent>

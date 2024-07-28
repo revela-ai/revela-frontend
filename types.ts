@@ -8,10 +8,10 @@ export interface Analysis {
         percent: number;
       }[];
     }[];
-    skin_type: [string, number];
-    skin_age: [string, number];
-    skin_acne: [string, number];
-    skin_wrinkle: [string, number];
+    skin_type: [string, number, string];
+    skin_age: [string, number, string];
+    skin_acne: [string, number, string];
+    skin_wrinkle: [string, number, string];
     analysis_id: number;
   }
   
