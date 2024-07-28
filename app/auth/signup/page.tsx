@@ -115,7 +115,7 @@ export default function Signup() {
         <div className="w-[87vw] py-8 px-4 lg:w-[45vw] xl:w-[543px] mx-auto lg:px-8 xl:px-[44px] bg-[#F6F7F8] shadow-lg grid">
           <div className="grid gap-2">
             <h1 className="text-xl lg:text-3xl font-bold">Create an account</h1>
-            <Button variant="outline" className="w-full mt-4">
+            <Button variant="outline" className="w-full mt-4 hidden">
               <Image
                 src="/images/google-logo.svg"
                 alt="google logo"
@@ -126,7 +126,7 @@ export default function Signup() {
               Continue with Google
             </Button>
           </div>
-          <div className="flex gap-5 items-center my-4">
+          <div className="hidden gap-5 items-center my-4">
             <Image
               src="/images/hr-line.svg"
               className="lg:w-[186px] w-[120px] mx-auto"

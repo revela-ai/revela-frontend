@@ -186,10 +186,10 @@ export default function MobileDashboardSidebar() {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="ml-auto flex gap-2">
-        <Button variant="outline" size="icon" className="h-8 w-8 self-center">
+        {/* <Button variant="outline" size="icon" className="h-8 w-8 self-center">
           <Bell className="h-4 w-4" />
           <span className="sr-only">Toggle notifications</span>
-        </Button>
+        </Button> */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button

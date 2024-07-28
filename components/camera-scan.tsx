@@ -29,6 +29,7 @@ import {
 } from "./ui/alert-dialog";
 import { Input } from "./ui/input";
 import CustomerDetailsForm from "./customer-details-form";
+import { usePathname } from "next/navigation";
 
 const API_URL = "https://quantum-backend-sxxx.onrender.com/skintone_analysis/";
 
@@ -47,6 +48,7 @@ const CameraScan: React.FC = () => {
   const [process, setProcess] = useState("capture");
   const [email, setEmail] = useState("");
   const { toast } = useToast();
+  const pathname = usePathname();
 
   const sendImageAnalysis = async () => {
     setProcessing(true);
@@ -240,30 +242,32 @@ const CameraScan: React.FC = () => {
                       <Redo2Icon className="w-5 h-5 mr-2" />
                       Retake Analysis
                     </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button className="rounded-full">
-                          <PlusIcon className="w-5 h-5 mr-2" />
-                          Assign to customer
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <div className="flex items-center">
-                            <AlertDialogTitle>
-                              Customer Details
-                            </AlertDialogTitle>
-                            <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
-                              <LucideSquareX />
-                            </AlertDialogCancel>
-                          </div>
-                          <AlertDialogDescription>
-                            Please take a moment to input your details
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <CustomerDetailsForm />
-                      </AlertDialogContent>
-                    </AlertDialog>
+                    {pathname === "/dashboard" && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button className="rounded-full flex">
+                            <PlusIcon className="w-5 h-5 mr-2" />
+                            Assign to customer
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <div className="flex items-center">
+                              <AlertDialogTitle>
+                                Customer Details
+                              </AlertDialogTitle>
+                              <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
+                                <LucideSquareX />
+                              </AlertDialogCancel>
+                            </div>
+                            <AlertDialogDescription>
+                              Please take a moment to input your details
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <CustomerDetailsForm />
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
                   </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>

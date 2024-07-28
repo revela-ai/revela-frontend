@@ -1,7 +1,7 @@
 "use client";
 
 import { fetchBusinessDetails, getCookie } from "@/utils/utils";
-import { LucideBuilding2, LucidePackage, LucideScanFace } from "lucide-react";
+import { LucideBuilding2, LucidePackage, LucideScanFace, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface ScansResponse {
@@ -17,6 +17,7 @@ interface Business {
   is_active: boolean;
   is_verified: boolean;
 }
+const email = localStorage.getItem("userEmail");
 
 export default function CustomerDetailsBanner() {
   const [totalScans, setTotalScans] = useState<number>(0);
@@ -25,7 +26,6 @@ export default function CustomerDetailsBanner() {
   const [businessName, setBusinessName] = useState<string>("");
 
   useEffect(() => {
-    const email = localStorage.getItem("userEmail");
     console.log(`Email prop received: ${email}`);
 
     const fetchTotalScans = async () => {
@@ -101,7 +101,7 @@ export default function CustomerDetailsBanner() {
         </div>
         <div>
           <p className="font-bold">{businessName}</p>
-          <p className="text-sm">North Legon</p>
+          <p className="text-sm">{email}</p>
         </div>
       </div>
       <div className="flex gap-2 items-center">
@@ -124,7 +124,7 @@ export default function CustomerDetailsBanner() {
       </div>
       <div className="flex gap-2 items-center">
         <div className="border-2 border-black p-4 rounded-full">
-          <LucidePackage className="text-black" />
+          <Users className="text-black" />
         </div>
         <div>
           <p className="font-bold">Customers</p>

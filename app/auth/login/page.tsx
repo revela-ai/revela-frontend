@@ -152,7 +152,7 @@ export default function Login() {
               >
                 {loading ? "Please wait..." : "Continue"}
               </Button>
-              <div className="flex">
+              <div className="hidden">
                 <Image
                   src="/images/hr-line.svg"
                   alt="horizontal line"
@@ -169,7 +169,7 @@ export default function Login() {
                   height={0}
                 />
               </div>
-              <Button variant="outline" className="w-full" type="button">
+              <Button variant="outline" className="w-full hidden" type="button">
                 <Image
                   src="/images/google-logo.svg"
                   alt="google logo"
