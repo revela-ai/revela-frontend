@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
-import { Bell, HomeIcon, LineChart, Menu, Package, Users } from "lucide-react";
+import { Bell, HomeIcon, LineChart, LucideSettings, Menu, Package, Users } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,6 +27,7 @@ import {
 } from "../ui/dropdown-menu";
 import { useToast } from "../ui/use-toast";
 import { getCookie } from "@/utils/utils";
+import Image from "next/image";
 
 export default function MobileDashboardSidebar() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -130,7 +131,13 @@ export default function MobileDashboardSidebar() {
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
           <nav className="grid gap-4 text-lg font-medium">
-            <RevelaLogo imageClassName="w-8" textClassName="lg:text-xl" />
+            <Image
+              src="/images/logo-alt.svg"
+              alt="Image"
+              width={53}
+              height={53}
+              className="w-36 h-full"
+            />
             <SideNavItem
               href="/dashboard"
               icon={HomeIcon}
@@ -154,10 +161,10 @@ export default function MobileDashboardSidebar() {
             </SideNavItem>
             <SideNavItem
               href="/dashboard/user-settings"
-              icon={LineChart}
+              icon={LucideSettings}
               onClick={() => setSidebarOpen(false)}
             >
-              Analytics
+              Settings
             </SideNavItem>
           </nav>
           <ProfileCard />

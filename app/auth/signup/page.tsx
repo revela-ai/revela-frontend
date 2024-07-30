@@ -242,13 +242,12 @@ export default function Signup() {
       <div className="hidden bg-muted lg:flex flex-col items-center justify-center">
         <div className="flex gap-4">
           <Image
-            src="/images/logo.svg"
+            src="/images/logo-alt.svg"
             alt="Image"
             width={53}
             height={53}
-            className=""
+            className="w-44 h-full"
           />
-          <p className="lg:text-[35px]">Revela</p>
         </div>
         <p className="mt-2">Sign in or create an account</p>
       </div>

@@ -131,7 +131,7 @@ const CameraScan: React.FC = () => {
               </>
             ) : capturedImage ? (
               <div>
-                <div className="p-2 bg-gradient-to-t from-blue-200 via-pink-300 to-pink-400 w-[300px] h-[300px] mx-auto rounded-full">
+                <div className="p-2 bg-gradient-to-t from-red-200 via-pink-300 to-red-400 w-[300px] h-[300px] mx-auto rounded-full">
                   <div
                     className="w-full h-full rounded-full bg-cover bg-center relative overflow-hidden"
                     style={{ backgroundImage: `url(${capturedImage})` }}
@@ -162,9 +162,9 @@ const CameraScan: React.FC = () => {
               <div className="flex items-center justify-center gap-5">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <div className="rounded-full p-1 bg-gradient-to-t from-blue-200 via-pink-300 to-pink-400">
-                      <Button className="rounded-full w-16 h-16 bg-white hover:bg-transparent border-none hover:bg-gradient-to-t ease-in-out from-blue-200 via-pink-300 to-pink-400 group">
-                        <CameraIcon className="h-10 w-10 text-blue-400/70 group-hover:text-white transition-colors duration-300" />
+                    <div className="rounded-full p-1 bg-gradient-to-t from-red-200 via-pink-300 to-red-400">
+                      <Button className="rounded-full w-16 h-16 bg-white hover:bg-transparent border-none hover:bg-gradient-to-t ease-in-out from-red-200 via-pink-300 to-red-400 group">
+                        <CameraIcon className="h-10 w-10 text-pink-400/70 group-hover:text-white transition-colors duration-300" />
                       </Button>
                     </div>
                   </AlertDialogTrigger>
@@ -183,12 +183,12 @@ const CameraScan: React.FC = () => {
                     </AlertDialogDescription>
                   </AlertDialogContent>
                 </AlertDialog>
-                <div className="rounded-full p-1 bg-gradient-to-t from-pink-200 via-blue-300 to-pink-400">
+                <div className="rounded-full p-1 bg-gradient-to-t from-pink-200 via-red-300 to-red-400">
                   <Button
                     onClick={() => fileInputRef.current?.click()}
-                    className="rounded-full w-16 h-16 bg-transparent bg-white hover:bg-transparent border-none hover:bg-gradient-to-t ease-in-out from-pink-200 via-blue-300 to-pink-400 group"
+                    className="rounded-full w-16 h-16 bg-transparent bg-white hover:bg-transparent border-none hover:bg-gradient-to-t ease-in-out from-pink-200 via-red-300 to-red-400 group"
                   >
-                    <ImagePlusIcon className="h-10 w-10 text-pink-400/70 group-hover:text-white transition-colors duration-300" />
+                    <ImagePlusIcon className="h-10 w-10 text-red-400/70 group-hover:text-white transition-colors duration-300" />
                   </Button>
                   <input
                     type="file"

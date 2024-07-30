@@ -44,8 +44,8 @@ export default function NavigationBar() {
         <div className="flex items-center justify-between flex-wrap max-w-[1040px] xl:max-w-[1380px] mx-auto px-4 md:px-0">
           <Link href="/">
             <Image
-              src="/images/logo.svg"
-              className="w-auto h-auto py-1"
+              src="/images/logo-alt.svg"
+              className="w-32 h32 py-1"
               alt="ecocan logo"
               width={32}
               height={32}
@@ -115,35 +115,37 @@ export default function NavigationBar() {
                 </a>
               </div>
             </div>
-            <div className="text-center ms-auto flex-col md:flex-row flex items-center justify-center gap-4 md:pt-0 pt-5">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button className="rounded-full h-8 bg-transparent border border-primary text-primary hover:text-white">
-                    Quick Scan
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <div className="flex items-center">
-                      <AlertDialogTitle>Scan Face</AlertDialogTitle>
-                      <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
-                        <LucideSquareX/>
-                      </AlertDialogCancel>
-                    </div>
-                    <AlertDialogDescription className="text-start">
-                      Select the camera icon to{" "}
-                      <span className="font-semibold">take a picture</span> or{" "}
-                      <span className="font-semibold">
-                        upload from your device
-                      </span>
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <CameraScan />
-                </AlertDialogContent>
-              </AlertDialog>
-              <Button asChild className="rounded-full h-8">
-                <Link href="/auth/signup">Get Started</Link>
-              </Button>
+            <div className="min-h-[87vh] md:min-h-0 flex lg:w-full">
+              <div className="text-center lg:ms-auto flex-col md:flex-row flex items-center justify-center gap-4 md:pt-0 pt-5 mt-auto w-full lg:w-fit">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button className="rounded-full w-full h-12 lg:h-8 bg-transparent border border-primary text-primary hover:text-white">
+                      Quick Scan
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <div className="flex items-center">
+                        <AlertDialogTitle>Scan Face</AlertDialogTitle>
+                        <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
+                          <LucideSquareX/>
+                        </AlertDialogCancel>
+                      </div>
+                      <AlertDialogDescription className="text-start">
+                        Select the camera icon to{" "}
+                        <span className="font-semibold">take a picture</span> or{" "}
+                        <span className="font-semibold">
+                          upload from your device
+                        </span>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <CameraScan />
+                  </AlertDialogContent>
+                </AlertDialog>
+                <Button asChild className="rounded-full w-full h-12 lg:h-8">
+                  <Link href="/auth/signup">Get Started</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

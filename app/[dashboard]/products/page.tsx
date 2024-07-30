@@ -44,7 +44,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CustomerDetailsForm from "@/components/customer-details-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import BatchImport from "@/components/batch-import-product";
@@ -131,7 +130,7 @@ export default function Products() {
                     Fill the form below to add your products one by one
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AddSingleProduct/>
+                <AddSingleProduct />
               </AlertDialogContent>
             </AlertDialog>
             <AlertDialog>
@@ -165,7 +164,7 @@ export default function Products() {
           </div>
         </div>
         <TabsContent value="all">
-          <Card x-chunk="dashboard-06-chunk-0">
+          <Card x-chunk="dashboard-06-chunk-0" className="w-[92vw] md:w-full">
             <CardHeader>
               <CardTitle>Products</CardTitle>
               <CardDescription>
@@ -173,71 +172,73 @@ export default function Products() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="hidden w-[100px] sm:table-cell">
-                      <span className="sr-only">Image</span>
-                    </TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Ingredients</TableHead>
-                    <TableHead>Suitable Skin</TableHead>
-                    <TableHead>Date added</TableHead>
-                    <TableHead>
-                      <span className="sr-only">Actions</span>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {products.map((product, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="hidden sm:table-cell">
-                        <Avatar>
-                          <AvatarImage src="" alt={product["Product Name"]} />
-                          <AvatarFallback>
-                            {String(product["Product Name"]).charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {product["Product Name"]}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">Active</Badge>
-                      </TableCell>
-                      <TableCell width="300px">
-                        {String(product["Description"])}
-                      </TableCell>
-                      <TableCell>{product["Active Ingredients"]}</TableCell>
-                      <TableCell>
-                        {product["Suitable for what Skin Type"]}
-                      </TableCell>
-                      <TableCell>{new Date().toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              aria-haspopup="true"
-                              size="icon"
-                              variant="ghost"
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Toggle menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table className="min-w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="hidden w-[100px] sm:table-cell">
+                        <span className="sr-only">Image</span>
+                      </TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Ingredients</TableHead>
+                      <TableHead>Suitable Skin</TableHead>
+                      <TableHead>Date added</TableHead>
+                      <TableHead>
+                        <span className="sr-only">Actions</span>
+                      </TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {products.map((product, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="hidden sm:table-cell">
+                          <Avatar>
+                            <AvatarImage src="" alt={product["Product Name"]} />
+                            <AvatarFallback>
+                              {String(product["Product Name"]).charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {product["Product Name"]}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">Active</Badge>
+                        </TableCell>
+                        <TableCell width="300px">
+                          {String(product["Description"])}
+                        </TableCell>
+                        <TableCell>{product["Active Ingredients"]}</TableCell>
+                        <TableCell>
+                          {product["Suitable for what Skin Type"]}
+                        </TableCell>
+                        <TableCell>{new Date().toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                aria-haspopup="true"
+                                size="icon"
+                                variant="ghost"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Toggle menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem>Edit</DropdownMenuItem>
+                              <DropdownMenuItem>Delete</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
             <CardFooter>
               <div className="text-xs text-muted-foreground">

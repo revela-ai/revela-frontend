@@ -103,7 +103,7 @@ export default function Customers() {
           </div>
         </div>
         <TabsContent value="all">
-          <Card x-chunk="dashboard-06-chunk-0">
+          <Card x-chunk="dashboard-06-chunk-0" className="w-[92vw] lg:w-full">
             {selectedCustomer ? (
               <>
                 <CardHeader>
@@ -169,13 +169,13 @@ export default function Customers() {
                         </TableHead>
                         <TableHead>Name</TableHead>
                         <TableHead>Phone</TableHead>
-                        <TableHead className="hidden md:table-cell">
+                        <TableHead className="table-cell">
                           Skin Type
                         </TableHead>
-                        <TableHead className="hidden md:table-cell">
+                        <TableHead className="table-cell">
                           Skin Condition
                         </TableHead>
-                        <TableHead className="hidden md:table-cell">
+                        <TableHead className="table-cell">
                           Last Scan
                         </TableHead>
                         <TableHead>
@@ -198,13 +198,13 @@ export default function Customers() {
                             {customer.name}
                           </TableCell>
                           <TableCell>{customer.telephone}</TableCell>
-                          <TableCell className="hidden md:table-cell">
+                          <TableCell className="table-cell">
                             {customer.analysis.skin_type[0]}
                           </TableCell>
-                          <TableCell className="hidden md:table-cell">
+                          <TableCell className="table-cell">
                             {customer.analysis.skin_acne[0]}
                           </TableCell>
-                          <TableCell className="hidden md:table-cell">
+                          <TableCell className="table-cell">
                             {new Date(customer.created_at).toLocaleString()}
                           </TableCell>
                           <TableCell>

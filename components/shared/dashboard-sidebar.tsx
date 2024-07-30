@@ -9,17 +9,22 @@ import {
   Users,
 } from "lucide-react";
 import React from "react";
-import { Button } from "../ui/button";
-import RevelaLogo from "./logo";
 import SideNavItem from "./side-nav-item";
 import ProfileCard from "./profile-card";
+import Image from "next/image";
 
 const DashboardSidebar: React.FC = () => {
   return (
     <div className="hidden border-r bg-muted/40 md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          <RevelaLogo imageClassName="w-8" textClassName="lg:text-xl" />
+          <Image
+            src="/images/logo-alt.svg"
+            alt="Image"
+            width={53}
+            height={53}
+            className="w-36 h-full"
+          />
         </div>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -37,7 +42,7 @@ const DashboardSidebar: React.FC = () => {
             </SideNavItem>
           </nav>
         </div>
-        <ProfileCard/>
+        <ProfileCard />
       </div>
     </div>
   );

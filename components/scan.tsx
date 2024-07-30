@@ -23,7 +23,7 @@ const Scan: React.FC<ScanProps> = ({ className, buttonTitle, buttonClass }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <div className="flex ms-auto justify-center items-center">
+        <div className="flex ms-auto justify-center items-center w-full lg:w-fit">
           <Button className={`${clsx(buttonClass)}`}>
             <ScanFace className={`${clsx(className)} mr-2`} />
             {buttonTitle}
