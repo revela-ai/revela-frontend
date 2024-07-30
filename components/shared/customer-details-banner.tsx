@@ -151,7 +151,7 @@ export default function CustomerDetailsBanner() {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2 lg:hidden">
-        <div className="h-40 w-48 shadow-lg bg-primary text-white rounded-lg p-4 flex flex-col">
+        <div className="h-40 shadow-lg bg-primary text-white rounded-lg p-2 flex flex-col">
           <div className="border-2 border-white p-2 h-10 w-10 flex items-center rounded-full">
             <LucideBuilding2 className="text-white" />
           </div>
@@ -160,7 +160,7 @@ export default function CustomerDetailsBanner() {
             <p className="text-xs">{email}</p>
           </div>
         </div>
-        <div className="h-40 w-48 shadow-lg border border-primary text-primary rounded-lg p-4 flex flex-col">
+        <div className="h-40 shadow-lg border border-primary text-primary rounded-lg p-2 flex flex-col">
           <div className="border-2 border-primary p-2 h-10 w-10 ms-auto flex items-center rounded-full">
             <Users className="text-primary" />
           </div>
@@ -169,7 +169,7 @@ export default function CustomerDetailsBanner() {
             <p className="text-xs text-end">{customers}</p>
           </div>
         </div>
-        <div className="h-40 w-48 shadow-lg border border-primary text-primary rounded-lg p-4 flex flex-col">
+        <div className="h-40 shadow-lg border border-primary text-primary rounded-lg p-2 flex flex-col">
           <div className="border-2 border-primary p-2 h-10 w-10 flex items-center rounded-full">
             <LucideScanFace className="text-primary" />
           </div>
@@ -178,7 +178,7 @@ export default function CustomerDetailsBanner() {
             <p className="text-xs">{totalScans}</p>
           </div>
         </div>
-        <div className="h-40 w-48 shadow-lg bg-primary text-white rounded-lg p-4 flex flex-col">
+        <div className="h-40 shadow-lg bg-primary text-white rounded-lg p-2 flex flex-col">
           <div className="border-2 border-white p-2 h-10 w-10 ms-auto flex items-center rounded-full">
             <LucidePackage className="text-white" />
           </div>
