@@ -6,35 +6,88 @@ import { LucideDownload, LucideUpload } from "lucide-react";
 import { Input } from "./ui/input";
 import * as XLSX from "xlsx";
 import { useToast } from "./ui/use-toast";
+import { getCookie } from "@/utils/utils";
 
 export default function BatchImport() {
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
+    const accessToken = getCookie("access_token");
     if (uploadedFile) {
       const reader = new FileReader();
-      reader.onload = (event: ProgressEvent<FileReader>) => {
+      reader.onload = async (event: ProgressEvent<FileReader>) => {
         const data = new Uint8Array(event.target?.result as ArrayBuffer);
         const workbook = XLSX.read(data, { type: "array" });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(sheet);
 
+        const transformedProducts = jsonData.map((product: any) => ({
+          name: product["Product Name"],
+          type: product["Product Type"],
+          brand: product["Product Brand"],
+          active_ingredients: product["Active Ingredients"] || "",
+          description: product["Description"],
+          skin_suitability: product["Suitable for what Skin Type"],
+        }));
+
+        setIsLoading(true);
+        const failedProducts = [];
+
+        for (const product of transformedProducts) {
+          try {
+            const response = await fetch(
+              "https://quantum-backend-sxxx.onrender.com/products/",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify(product),
+              }
+            );
+
+            if (!response.ok) {
+              const errorDetail = await response.text();
+              console.error(`Error adding product: ${errorDetail}`);
+              failedProducts.push(product);
+              continue;
+            }
+
+            const responseData = await response.json();
+          } catch (error) {
+            console.error("Network error:", error);
+            failedProducts.push(product);
+          }
+        }
+
         const existingBulkProducts = JSON.parse(
           localStorage.getItem("bulkProducts") || "[]"
         );
 
-        const combinedProducts = [...existingBulkProducts, ...jsonData];
-
+        const combinedProducts = [
+          ...existingBulkProducts,
+          ...transformedProducts,
+        ];
         localStorage.setItem("bulkProducts", JSON.stringify(combinedProducts));
 
-        console.log(combinedProducts);
+        if (failedProducts.length > 0) {
+          toast({
+            title: "Some products failed to upload",
+            description: `${failedProducts.length} out of ${transformedProducts.length} failed.`,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "All products uploaded successfully",
+          });
+        }
 
-        toast({
-          title: "File uploaded successfully",
-        });
+        setIsLoading(false);
         window.location.reload();
       };
       reader.readAsArrayBuffer(uploadedFile);
@@ -73,9 +126,10 @@ export default function BatchImport() {
           <Button
             className="w-full mt-2 bg-transparent text-primary hover:text-white border border-primary"
             onClick={triggerFileUpload}
+            disabled={isLoading}
           >
             <LucideUpload className="mr-2" />
-            Upload the file
+            {isLoading ? "Uploading the file" : "Upload the file"}
           </Button>
         </div>
       </div>

@@ -74,7 +74,6 @@ const CameraScan: React.FC = () => {
         body: formData,
       });
       const data = await response.json();
-      console.log(response);
       setAnalysis(data);
       setProcess("analysis");
     } catch (error) {

@@ -80,7 +80,6 @@ export default function CustomerDetailsForm() {
     },
   });
 
-  console.log(`Current Analysis Id: ${analysis_id}`);
 
   const accessToken = getCookie("access_token");
   const [isLoading, setIsLoading] = useState(false);
@@ -111,11 +110,9 @@ export default function CustomerDetailsForm() {
         body: JSON.stringify(dataToSend),
       });
       if (!response.ok) {
-        console.log("Failed to send form");
         throw new Error("Failed to submit form");
       }
       const responseData = await response.json();
-      console.log(`Success: ${responseData}`);
       const storedCustomers = JSON.parse(localStorage.getItem("customers") || "[]");
       storedCustomers.push({ ...responseData, analysis});
       localStorage.setItem("customers", JSON.stringify(storedCustomers));

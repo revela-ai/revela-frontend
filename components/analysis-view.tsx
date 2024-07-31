@@ -30,7 +30,6 @@ const AnalysisView: React.FC<Props> = ({ analysis }) => {
     setAnalysis(analysis);
   }, [analysis, setAnalysis]);
 
-  console.log(`current analysis id: ${analysis.analysis_id}`)
 
   const sendFeedback = async () => {
     if (rating === null || !analysis) {

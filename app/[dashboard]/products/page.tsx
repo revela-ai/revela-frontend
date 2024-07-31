@@ -49,28 +49,67 @@ import { Badge } from "@/components/ui/badge";
 import BatchImport from "@/components/batch-import-product";
 import { Input } from "@/components/ui/input";
 import AddSingleProduct from "@/components/add-single-product";
+import { getCookie } from "@/utils/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Product {
-  "Product Name": string;
-  "Product Type": string;
-  "Product Brand": string;
-  "Active Ingredients": string;
-  Description: string;
-  "Suitable for what Skin Type": string;
+  name: string;
+  type: string;
+  brand: string;
+  active_ingredients: string;
+  description: string;
+  skin_suitability: string;
 }
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const accessToken = getCookie("access_token");
 
   useEffect(() => {
-    const savedProducts = localStorage.getItem("bulkProducts");
+    const loadProducts = async () => {
+      const savedProducts = localStorage.getItem("bulkProducts");
+      const lastUpdated = localStorage.getItem("productsLastUpdated");
+      const now = new Date().getTime();
 
-    const parsedProducts: Product[] = savedProducts
-      ? JSON.parse(savedProducts)
-      : [];
+      if (
+        savedProducts &&
+        lastUpdated &&
+        now - parseInt(lastUpdated, 10) < 7 * 24 * 60 * 60 * 1000
+      ) {
+        setProducts(JSON.parse(savedProducts));
+        setIsLoading(false);
+      } else {
+        try {
+          const response = await fetch(
+            "https://quantum-backend-sxxx.onrender.com/products/",
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
 
-    setProducts(parsedProducts);
-  }, []);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          setProducts(data);
+          localStorage.setItem("bulkProducts", JSON.stringify(data));
+          localStorage.setItem("productsLastUpdated", now.toString());
+        } catch (error) {
+          console.error("Error fetching products from backend:", error);
+          setError("Failed to load products. Please try again later.");
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadProducts();
+  }, [accessToken]);
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 mt-4 sm:px-6 sm:py-0">
@@ -164,89 +203,109 @@ export default function Products() {
           </div>
         </div>
         <TabsContent value="all">
-          <Card x-chunk="dashboard-06-chunk-0" className="w-[92vw] md:w-full">
-            <CardHeader>
-              <CardTitle>Products</CardTitle>
-              <CardDescription>
-                Manage your products and view their sales performance.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table className="min-w-full">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="hidden w-[100px] sm:table-cell">
-                        <span className="sr-only">Image</span>
-                      </TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Ingredients</TableHead>
-                      <TableHead>Suitable Skin</TableHead>
-                      <TableHead>Date added</TableHead>
-                      <TableHead>
-                        <span className="sr-only">Actions</span>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {products.map((product, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="hidden sm:table-cell">
-                          <Avatar>
-                            <AvatarImage src="" alt={product["Product Name"]} />
-                            <AvatarFallback>
-                              {String(product["Product Name"]).charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {product["Product Name"]}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">Active</Badge>
-                        </TableCell>
-                        <TableCell width="300px">
-                          {String(product["Description"])}
-                        </TableCell>
-                        <TableCell>{product["Active Ingredients"]}</TableCell>
-                        <TableCell>
-                          {product["Suitable for what Skin Type"]}
-                        </TableCell>
-                        <TableCell>{new Date().toLocaleDateString()}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                aria-haspopup="true"
-                                size="icon"
-                                variant="ghost"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Toggle menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem>Edit</DropdownMenuItem>
-                              <DropdownMenuItem>Delete</DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
+          {isLoading ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Products</CardTitle>
+                <CardDescription>
+                  Manage your products and view their sales performance.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-[250px]" />
+                  <Skeleton className="h-4 w-[200px]" />
+                </div>
+              </CardContent>
+            </Card>
+          ) : error ? (
+            <Card>{error}</Card>
+          ) : (
+            <Card x-chunk="dashboard-06-chunk-0" className="w-[92vw] md:w-full">
+              <CardHeader>
+                <CardTitle>Products</CardTitle>
+                <CardDescription>
+                  Manage your products and view their sales performance.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <Table className="min-w-full">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="hidden w-[100px] sm:table-cell">
+                          <span className="sr-only">Image</span>
+                        </TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead>Ingredients</TableHead>
+                        <TableHead>Suitable Skin</TableHead>
+                        <TableHead>Date added</TableHead>
+                        <TableHead>
+                          <span className="sr-only">Actions</span>
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <div className="text-xs text-muted-foreground">
-                Showing <strong>{products.length} - 10</strong> of{" "}
-                <strong>{products.length}</strong> products
-              </div>
-            </CardFooter>
-          </Card>
+                    </TableHeader>
+                    <TableBody>
+                      {products.map((product, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="hidden sm:table-cell">
+                            <Avatar>
+                              <AvatarImage src="" alt={product.name} />
+                              <AvatarFallback>
+                                {String(product.name).charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {product.name}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">Active</Badge>
+                          </TableCell>
+                          <TableCell width="300px">
+                            {String(product.description)}
+                          </TableCell>
+                          <TableCell>{product.active_ingredients}</TableCell>
+                          <TableCell>{product.skin_suitability}</TableCell>
+                          <TableCell>
+                            {new Date().toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  aria-haspopup="true"
+                                  size="icon"
+                                  variant="ghost"
+                                >
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  <span className="sr-only">Toggle menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem>Edit</DropdownMenuItem>
+                                <DropdownMenuItem>Delete</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <div className="text-xs text-muted-foreground">
+                  Showing <strong>{products.length} - 10</strong> of{" "}
+                  <strong>{products.length}</strong> products
+                </div>
+              </CardFooter>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </main>

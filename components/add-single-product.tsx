@@ -13,6 +13,7 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
+import { getCookie } from "@/utils/utils";
 
 const formSchema = z.object({
   productName: z.string().min(2, {
@@ -50,19 +51,42 @@ export default function AddSingleProduct() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const accessToken = getCookie("access_token");
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
 
       const newProduct = {
-        "Product Name": values.productName,
-        "Product Type": values.productType,
-        "Product Brand": values.productBrand,
-        "Active Ingredients": values.activeIngredients,
-        Description: values.description,
-        "Suitable for what Skin Type": values.suitableForSkinType,
+        name: values.productName,
+        type: values.productType,
+        brand: values.productBrand,
+        active_ingredients: values.activeIngredients,
+        description: values.description,
+        skin_suitability: values.suitableForSkinType,
       };
+
+      const response = await fetch(
+        "https://quantum-backend-sxxx.onrender.com/products/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(newProduct),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+
+      toast({
+        title: "Product added successfully",
+      });
 
       const bulkProducts = JSON.parse(
         localStorage.getItem("bulkProducts") || "[]"
@@ -70,14 +94,9 @@ export default function AddSingleProduct() {
       bulkProducts.push(newProduct);
       localStorage.setItem("bulkProducts", JSON.stringify(bulkProducts));
 
-      toast({
-        title: "Product added successfully",
-      });
-
       setIsLoading(false);
       window.location.reload();
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
     }
   };
