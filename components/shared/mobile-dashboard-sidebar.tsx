@@ -31,7 +31,7 @@ import Image from "next/image";
 
 export default function MobileDashboardSidebar() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [avatarFallback, setAvatarFallback] = useState<string>("P"); // Default fallback
+  const [avatarFallback, setAvatarFallback] = useState<string>("P");
   const pathname = usePathname();
   const pathSegments = pathname?.split("/").filter(Boolean) || [];
   const breadcrumbItems = pathSegments.map((segment, index) => {
@@ -43,13 +43,11 @@ export default function MobileDashboardSidebar() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Retrieve the business name from local storage
     const storedBusiness = localStorage.getItem("businessDetails");
     if (storedBusiness) {
       const businessDetails = JSON.parse(storedBusiness);
       const businessName = businessDetails.name;
       if (businessName) {
-        // Set the first letter of the business name as the avatar fallback
         setAvatarFallback(businessName.charAt(0).toUpperCase());
       }
     }
