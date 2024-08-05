@@ -74,6 +74,7 @@ const CameraScan: React.FC = () => {
         body: formData,
       });
       const data = await response.json();
+      console.log(data);
       setAnalysis(data);
       setProcess("analysis");
     } catch (error) {
@@ -172,7 +173,7 @@ const CameraScan: React.FC = () => {
                       <div className="flex items-center">
                         <AlertDialogTitle>Scanning Face</AlertDialogTitle>
                         <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
-                          <LucideSquareX/>
+                          <LucideSquareX />
                         </AlertDialogCancel>
                       </div>
                     </AlertDialogHeader>
@@ -210,7 +211,7 @@ const CameraScan: React.FC = () => {
               <AlertDialogHeader>
                 <div className="flex items-center">
                   <AlertDialogTitle>Analysis Result</AlertDialogTitle>
-                  <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
+                  <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit" onClick={() => window.location.reload()}>
                     <LucideSquareX />
                   </AlertDialogCancel>
                 </div>
@@ -236,7 +237,7 @@ const CameraScan: React.FC = () => {
                   <div className="flex gap-4 mt-4">
                     <Button
                       onClick={() => setProcess("capture")}
-                      className="rounded-full"
+                      className="rounded-full bg-transparent border border-primary text-primary hover:text-primary hover:bg-transparent"
                     >
                       <Redo2Icon className="w-5 h-5 mr-2" />
                       Retake Analysis
