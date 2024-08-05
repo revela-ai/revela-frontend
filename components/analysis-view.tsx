@@ -23,6 +23,17 @@ import { Progress } from "./ui/progress";
 import { useAnalysis } from "@/context/analysis-context";
 import { Button } from "./ui/button";
 import { LucideSquareX } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Textarea } from "./ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 type Props = {
   analysis: Analysis;
@@ -48,6 +59,7 @@ const AnalysisView: React.FC<Props> = ({ analysis }) => {
   const [showModal, setShowModal] = useState(false); // New state for modal visibility
   const router = useRouter();
   const { toast } = useToast();
+  const pathname = usePathname();
 
   useEffect(() => {
     setAnalysis(analysis);
@@ -128,16 +140,16 @@ const AnalysisView: React.FC<Props> = ({ analysis }) => {
   return (
     <section>
       <div>
-      <div className="flex items-center mb-2">
-          <Button
-            className="rounded-full"
-            disabled={loading}
-            onClick={fetchRecommendations}
-          >
-            {loading
-              ? "Getting Recommendations..."
-              : "Get Recommendations"}
-          </Button>
+        <div className="flex items-center mb-2">
+          {pathname === "/dashboard" && (
+            <Button
+              className="rounded-full"
+              disabled={loading}
+              onClick={fetchRecommendations}
+            >
+              {loading ? "Getting Recommendations..." : "Get Recommendations"}
+            </Button>
+          )}
           <AlertDialog open={showModal} onOpenChange={setShowModal}>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -158,7 +170,9 @@ const AnalysisView: React.FC<Props> = ({ analysis }) => {
                 <Accordion type="single" collapsible className="w-full">
                   {recommendations.map((rec, index) => (
                     <AccordionItem key={index} value={`item-${index + 1}`}>
-                      <AccordionTrigger className="text-sm text-start">{rec.label_type}</AccordionTrigger>
+                      <AccordionTrigger className="text-sm text-start">
+                        {rec.label_type}
+                      </AccordionTrigger>
                       <AccordionContent>
                         <div>
                           <p>
@@ -239,11 +253,11 @@ const AnalysisView: React.FC<Props> = ({ analysis }) => {
           </AccordionItem>
         </Accordion>
       </div>
-      {feedbackDone && (
-        <div className="card feedback-section hidden">
+      {feedbackDone && pathname === "/" && (
+        <div className="card feedback-section">
           <h3>Provide Your Feedback</h3>
           <div className="feedback">
-            <textarea
+            <Textarea
               onChange={(e) => setComment(e.target.value)}
               style={{
                 height: "100px",
@@ -251,26 +265,25 @@ const AnalysisView: React.FC<Props> = ({ analysis }) => {
                 color: "black",
               }}
               placeholder="Enter your comment here"
-            ></textarea>
-            <label>
-              Rating:
-              <select
-                value={rating ?? ""}
-                onChange={(e) => setRating(Number(e.target.value))}
-              >
-                <option value="" disabled>
-                  Select rating
-                </option>
-                {[1, 2, 3, 4, 5].map((rate) => (
-                  <option key={rate} value={rate}>
-                    {rate}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button className="send-email" onClick={sendFeedback}>
-              Submit Feedback
-            </button>
+            ></Textarea>
+            <div className="flex items-center my-4">
+              <Select onValueChange={(value) => setRating(Number(value))}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select rating" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Rating</SelectLabel>
+                    {[1, 2, 3, 4, 5].map((rate) => (
+                      <SelectItem key={rate} value={String(rate)}>
+                        {rate}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Button onClick={sendFeedback} className="ms-auto">Submit Feedback</Button>
+            </div>
           </div>
         </div>
       )}
