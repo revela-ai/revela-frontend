@@ -4,11 +4,6 @@ import { v4 } from "uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "@/utils/firebase.Config";
 import useCamera from "@/hooks/useCamera";
-import CustomWebcam from "./custom-webcam";
-import Notice from "./notice";
-import AnalysisView from "./analysis-view";
-import { useToast } from "./ui/use-toast";
-import { Button } from "./ui/button";
 import {
   CameraIcon,
   ImagePlusIcon,
@@ -17,6 +12,12 @@ import {
   PlusIcon,
   Redo2Icon,
 } from "lucide-react";
+
+import { usePathname } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import CustomWebcam from "@/components/custom-webcam";
+import Notice from "@/components/notice";
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -25,14 +26,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "./ui/alert-dialog";
-import { Input } from "./ui/input";
-import CustomerDetailsForm from "./customer-details-form";
-import { usePathname } from "next/navigation";
+} from "@/components/ui/alert-dialog";
+import AnalysisView from "@/components/analysis-view";
+import { Input } from "@/components/ui/input";
+import CustomerDetailsForm from "@/components/customer-details-form";
+import UniqueCustomerDetailsForm from "./unique-customer-form";
 
 const API_URL = "https://quantum-backend-sxxx.onrender.com/skintone_analysis/";
 
-const CameraScan: React.FC = () => {
+const UniqueCameraScan: React.FC = () => {
   const {
     isCameraOpen,
     capturedImage,
@@ -42,12 +44,11 @@ const CameraScan: React.FC = () => {
     handleUpload,
   } = useCamera();
   const [processing, setProcessing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  //   const [isLoading, setIsLoading] = useState(false);
   const [analysis, setAnalysis] = useState<any>({});
   const [process, setProcess] = useState("capture");
-  const [email, setEmail] = useState("");
+  //   const [email, setEmail] = useState("");
   const { toast } = useToast();
-  const pathname = usePathname();
 
   const sendImageAnalysis = async () => {
     setProcessing(true);
@@ -83,38 +84,6 @@ const CameraScan: React.FC = () => {
       });
     } finally {
       setProcessing(false);
-    }
-  };
-
-  const sendAnalysisByEmail = async () => {
-    const data = { analysis, email };
-
-    try {
-      setIsLoading(true);
-      const response = await fetch(
-        "https://quantum-backend-sxxx.onrender.com/send_analysis/",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (response.ok) {
-        toast({ title: "Analysis sent to your email!" });
-        setIsLoading(false);
-      } else {
-        toast({
-          title:
-            "Failed to send analysis. Please check the email again and retry!",
-          variant: "destructive",
-        });
-      }
-    } catch {
-      toast({
-        title: "Error sending analysis to email",
-        variant: "destructive",
-      });
     }
   };
 
@@ -167,7 +136,7 @@ const CameraScan: React.FC = () => {
                       </Button>
                     </div>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="w-[87vw]">
+                  <AlertDialogContent className="w-[87vw]" aria-describedby="">
                     <AlertDialogHeader>
                       <div className="flex items-center w-[75vw] lg:w-full">
                         <AlertDialogTitle>Scanning Face</AlertDialogTitle>
@@ -177,9 +146,9 @@ const CameraScan: React.FC = () => {
                       </div>
                     </AlertDialogHeader>
                     <CustomWebcam onCapture={handleCapture} />
-                    <AlertDialogDescription>
+                    <div>
                       <Notice />
-                    </AlertDialogDescription>
+                    </div>
                   </AlertDialogContent>
                 </AlertDialog>
                 <div className="rounded-full p-1 bg-gradient-to-t from-pink-200 via-red-300 to-red-400">
@@ -206,67 +175,60 @@ const CameraScan: React.FC = () => {
             <AlertDialogTrigger asChild>
               <Button className="rounded-full">View Analysis</Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="w-[87vw] lg:w-full">
               <AlertDialogHeader>
-                <div className="flex items-center">
+                <div className="flex items-center w-[78vw] lg:w-full">
                   <AlertDialogTitle>Analysis Result</AlertDialogTitle>
-                  <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit" onClick={() => window.location.reload()}>
+                  <AlertDialogCancel
+                    className="border-none ms-auto hover:bg-transparent w-fit"
+                    onClick={() => window.location.reload()}
+                  >
                     <LucideSquareX />
                   </AlertDialogCancel>
                 </div>
-                <AlertDialogDescription>
-                  <AnalysisView analysis={analysis} />
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="email"
-                      placeholder="Enter customer email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="input"
-                    />
-                    <Button
-                      onClick={sendAnalysisByEmail}
-                      disabled={isLoading}
-                      className="bg-transparent border border-primary text-primary hover:text-white"
-                    >
-                      <MailIcon className="w-5 h-5 mr-2" />
-                      {isLoading ? "Sending mail..." : "Send to Email"}
-                    </Button>
-                  </div>
-                  <div className="flex gap-4 mt-4">
+                <AlertDialogDescription className="w-[78vw] lg:w-full">
+                <div className="hidden">
+                    <AnalysisView analysis={analysis} />
+                </div>
+                  <p>
+                    Tap the{" "}
+                    <span className="text-primary">customer form button</span>{" "}
+                    to access your analysis and product recommendations from the
+                    business.
+                  </p>
+                  <div className="">
                     <Button
                       onClick={() => setProcess("capture")}
-                      className="rounded-full bg-transparent border border-primary text-primary hover:text-primary hover:bg-transparent"
+                      className="rounded-full bg-transparent border w-full my-4 border-primary text-primary hover:text-primary hover:bg-transparent"
                     >
                       <Redo2Icon className="w-5 h-5 mr-2" />
                       Retake Analysis
                     </Button>
-                    {pathname === "/dashboard" && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button className="rounded-full flex">
-                            <PlusIcon className="w-5 h-5 mr-2" />
-                            Assign to customer
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <div className="flex items-center">
-                              <AlertDialogTitle>
-                                Customer Details
-                              </AlertDialogTitle>
-                              <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
-                                <LucideSquareX />
-                              </AlertDialogCancel>
-                            </div>
-                            <AlertDialogDescription>
-                              Please take a moment to input your details
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <CustomerDetailsForm />
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
+
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button className="rounded-full flex w-full">
+                          <PlusIcon className="w-5 h-5 mr-2" />
+                          Customer Form
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="w-[87vw]">
+                        <AlertDialogHeader>
+                          <div className="flex items-center">
+                            <AlertDialogTitle>
+                              Customer Details
+                            </AlertDialogTitle>
+                            <AlertDialogCancel className="border-none ms-auto hover:bg-transparent w-fit">
+                              <LucideSquareX />
+                            </AlertDialogCancel>
+                          </div>
+                          <AlertDialogDescription>
+                            Please take a moment to input your details
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <UniqueCustomerDetailsForm />
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </AlertDialogDescription>
               </AlertDialogHeader>
@@ -278,4 +240,4 @@ const CameraScan: React.FC = () => {
   );
 };
 
-export default CameraScan;
+export default UniqueCameraScan;

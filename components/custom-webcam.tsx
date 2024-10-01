@@ -21,7 +21,7 @@ const CustomWebcam: React.FC<CustomWebcamProps> = ({ onCapture }) => {
 
   return (
     <div className="container">
-      <div className="w-[300px] h-[300px] mx-auto rounded-full p-2 bg-gradient-to-t from-blue-200 via-pink-300 to-pink-400">
+      <div className="w-56 h-56 lg:w-[300px] lg:h-[300px] mx-auto rounded-full p-2 bg-gradient-to-t from-blue-200 via-pink-300 to-pink-400">
         {imgSrc ? (
           <Image
             src={imgSrc}

@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
 import { LucideSquareX, ScanFace } from "lucide-react";
 import React from "react";
-import { Button } from "./ui/button";
+import clsx from "clsx";
+import { AnalysisProvider } from "@/context/analysis-context";
 import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogTrigger,
+  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogDescription,
-} from "./ui/alert-dialog";
-import CameraScan from "./camera-scan";
-import clsx from "clsx";
-import { AnalysisProvider } from "@/context/analysis-context";
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import UniqueCameraScan from "./unique-camera-scan";
 
 interface ScanProps {
   className?: string;
@@ -22,7 +22,11 @@ interface ScanProps {
   buttonClass?: string;
 }
 
-const Scan: React.FC<ScanProps> = ({ className, buttonTitle, buttonClass }) => {
+const UniqueLinkScan: React.FC<ScanProps> = ({
+  className,
+  buttonTitle,
+  buttonClass,
+}) => {
   return (
     <AnalysisProvider>
       <AlertDialog>
@@ -48,11 +52,11 @@ const Scan: React.FC<ScanProps> = ({ className, buttonTitle, buttonClass }) => {
               <span className="font-semibold">upload from your device</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <CameraScan />
+          <UniqueCameraScan />
         </AlertDialogContent>
       </AlertDialog>
     </AnalysisProvider>
   );
 };
 
-export default Scan;
+export default UniqueLinkScan;
