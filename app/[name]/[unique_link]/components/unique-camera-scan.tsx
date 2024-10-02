@@ -187,7 +187,7 @@ const UniqueCameraScan: React.FC = () => {
                   </AlertDialogCancel>
                 </div>
                 <AlertDialogDescription className="w-[78vw] lg:w-full">
-                <div className="hidden">
+                <div className="">
                     <AnalysisView analysis={analysis} />
                 </div>
                   <p>
@@ -208,8 +208,8 @@ const UniqueCameraScan: React.FC = () => {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button className="rounded-full flex w-full">
-                          <PlusIcon className="w-5 h-5 mr-2" />
-                          Customer Form
+                    
+                          Get Product Recommendations
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent className="w-[87vw]">

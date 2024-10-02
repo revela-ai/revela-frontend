@@ -5,8 +5,8 @@ export default function ProfileCard() {
     <div className="mt-auto p-4">
       <div className="border rounded-md shadow-lg p-4">
         <div className="mx-auto text-muted-foreground">
-          <p className="text-primary font-semibold">Upgrade Plan</p>
-          <p className="text-muted-foreground text-xs">Subscribe to Pro to use extra features</p>
+          <p className="text-primary font-semibold">Your Unique Link</p>
+          {/* display unique link here for business to copy */}
         </div>
       </div>
     </div>

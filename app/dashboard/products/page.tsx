@@ -65,23 +65,25 @@ export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const accessToken = getCookie("access_token");
 
   useEffect(() => {
     const loadProducts = async () => {
-      const savedProducts = localStorage.getItem("bulkProducts");
-      const lastUpdated = localStorage.getItem("productsLastUpdated");
-      const now = new Date().getTime();
+      setIsLoading(true);
+      setError(null);
 
-      if (
-        savedProducts &&
-        lastUpdated &&
-        now - parseInt(lastUpdated, 10) < 7 * 24 * 60 * 60 * 1000
-      ) {
-        setProducts(JSON.parse(savedProducts));
-        setIsLoading(false);
-      } else {
-        try {
+      try {
+        const savedProducts = localStorage.getItem("bulkProducts");
+        const lastUpdated = localStorage.getItem("productsLastUpdated");
+        const now = new Date().getTime();
+
+        if (
+          savedProducts &&
+          lastUpdated &&
+          now - parseInt(lastUpdated, 10) < 7 * 24 * 60 * 60 * 1000
+        ) {
+          setProducts(JSON.parse(savedProducts));
+        } else {
+          const accessToken = getCookie("access_token");
           const response = await fetch(
             "https://quantum-backend-sxxx.onrender.com/products/",
             {
@@ -99,17 +101,17 @@ export default function Products() {
           setProducts(data);
           localStorage.setItem("bulkProducts", JSON.stringify(data));
           localStorage.setItem("productsLastUpdated", now.toString());
-        } catch (error) {
-          console.error("Error fetching products from backend:", error);
-          setError("Failed to load products. Please try again later.");
-        } finally {
-          setIsLoading(false);
         }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setError("Failed to load products. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadProducts();
-  }, [accessToken]);
+  }, []);
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 mt-4 sm:px-6 sm:py-0">
