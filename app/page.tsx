@@ -13,8 +13,8 @@ export default function Home() {
           Revela&apos;s accurate skin analysis & AI-Powered product
           recommendations bridges the gap between science and beauty
         </p>
-        <Button asChild className="rounded-full w-fit h-11 px-20 mt-4">
-          <Link href="/auth/signup">Get Started</Link>
+        <Button asChild className="rounded-full w-full lg:w-fit h-11 px-20 my-4">
+          <Link href="/auth/signup">Register as a business</Link>
         </Button>
       </div>
       <div className="overflow-hidden xl:h-[44rem] xl:w-[32rem] md:h-[32rem] md:w-96 ms-auto  shadow-2xl rounded-2xl">

@@ -52,9 +52,9 @@ const DashboardSidebar: React.FC = () => {
             <SideNavItem href="/dashboard/products" icon={Package}>
               Products
             </SideNavItem>
-            <SideNavItem href="/dashboard/user-settings" icon={LucideSettings}>
+            {/* <SideNavItem href="/dashboard/user-settings" icon={LucideSettings}>
               Settings
-            </SideNavItem>
+            </SideNavItem> */}
           </nav>
         </div>
         <ProfileCard uniqueLink={uniqueLink} />

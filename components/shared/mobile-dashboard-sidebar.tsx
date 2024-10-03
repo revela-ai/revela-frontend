@@ -154,13 +154,13 @@ export default function MobileDashboardSidebar() {
             >
               Customers
             </SideNavItem>
-            <SideNavItem
+            {/* <SideNavItem
               href="/dashboard/user-settings"
               icon={LucideSettings}
               onClick={() => setSidebarOpen(false)}
             >
               Settings
-            </SideNavItem>
+            </SideNavItem> */}
           </nav>
           <ProfileCard uniqueLink={uniqueLink} />
         </SheetContent>

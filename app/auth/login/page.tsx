@@ -137,7 +137,7 @@ export default function Login() {
               />
               <Button
                 type="submit"
-                className="w-full lg:w-[105px] rounded-full ms-auto"
+                className="w-full lg:w-40 rounded-full ms-auto"
                 disabled={loading}
               >
                 {loading ? "Please wait..." : "Continue"}

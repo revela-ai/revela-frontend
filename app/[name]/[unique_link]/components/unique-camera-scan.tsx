@@ -8,12 +8,9 @@ import {
   CameraIcon,
   ImagePlusIcon,
   LucideSquareX,
-  MailIcon,
-  PlusIcon,
   Redo2Icon,
 } from "lucide-react";
 
-import { usePathname } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import CustomWebcam from "@/components/custom-webcam";
 import Notice from "@/components/notice";
@@ -28,8 +25,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import AnalysisView from "@/components/analysis-view";
-import { Input } from "@/components/ui/input";
-import CustomerDetailsForm from "@/components/customer-details-form";
 import UniqueCustomerDetailsForm from "./unique-customer-form";
 
 const API_URL = "https://quantum-backend-sxxx.onrender.com/skintone_analysis/";

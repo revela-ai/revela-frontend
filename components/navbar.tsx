@@ -40,7 +40,7 @@ export default function NavigationBar() {
 
   return (
     <AnalysisProvider>
-      <nav className="fixed top-0 left-0 right-0 bg-[#ffffffb2] backdrop-blur-xl md:px-4 border-b border-b-[#EDEDED] z-50">
+      <nav className="fixed top-0 left-0 right-0 bg-[#ffffff] backdrop-blur-xl md:px-4 border-b border-b-[#EDEDED] z-50">
         <div className="flex items-center justify-between flex-wrap max-w-[1040px] xl:max-w-[1380px] mx-auto px-4 md:px-0">
           <Link href="/">
             <Image
@@ -123,7 +123,7 @@ export default function NavigationBar() {
                       Quick Scan
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent>
+                  <AlertDialogContent className="w-[87vw]">
                     <AlertDialogHeader>
                       <div className="flex items-center">
                         <AlertDialogTitle>Scan Face</AlertDialogTitle>
@@ -143,7 +143,7 @@ export default function NavigationBar() {
                   </AlertDialogContent>
                 </AlertDialog>
                 <Button asChild className="rounded-full w-full h-12 lg:h-8">
-                  <Link href="/auth/signup">Get Started</Link>
+                  <Link href="/auth/signup">Register as a business</Link>
                 </Button>
               </div>
             </div>
