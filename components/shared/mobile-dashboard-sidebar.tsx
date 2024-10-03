@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
-import { Bell, HomeIcon, LineChart, LucideSettings, Menu, Package, Users } from "lucide-react";
+import { HomeIcon, LucideSettings, Menu, Package, Users } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,27 +11,20 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import RevelaLogo from "./logo";
 import SideNavItem from "./side-nav-item";
 import ProfileCard from "./profile-card";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { useToast } from "../ui/use-toast";
+
 import { getCookie } from "@/utils/utils";
 import Image from "next/image";
+import UserAccount from "./user-account";
+import { useToast } from "@/hooks/use-toast";
 
 export default function MobileDashboardSidebar() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [avatarFallback, setAvatarFallback] = useState<string>("P");
+  const [uniqueLink, setUniqueLink] = useState<string>("");
   const pathname = usePathname();
   const pathSegments = pathname?.split("/").filter(Boolean) || [];
   const breadcrumbItems = pathSegments.map((segment, index) => {
@@ -47,8 +40,12 @@ export default function MobileDashboardSidebar() {
     if (storedBusiness) {
       const businessDetails = JSON.parse(storedBusiness);
       const businessName = businessDetails.name;
+      const businessUniqueLink = businessDetails.unique_link;
       if (businessName) {
         setAvatarFallback(businessName.charAt(0).toUpperCase());
+      }
+      if (businessUniqueLink) {
+        setUniqueLink(`revela.live/${businessName.toLowerCase().replace(/\s+/g, '-')}/${businessUniqueLink}`);
       }
     }
   }, []);
@@ -165,7 +162,7 @@ export default function MobileDashboardSidebar() {
               Settings
             </SideNavItem>
           </nav>
-          <ProfileCard />
+          <ProfileCard uniqueLink={uniqueLink} />
         </SheetContent>
       </Sheet>
       <Breadcrumb className="hidden md:flex">
@@ -190,34 +187,7 @@ export default function MobileDashboardSidebar() {
           )}
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="ml-auto flex gap-2">
-        {/* <Button variant="outline" size="icon" className="h-8 w-8 self-center">
-          <Bell className="h-4 w-4" />
-          <span className="sr-only">Toggle notifications</span>
-        </Button> */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="overflow-hidden rounded-full"
-            >
-              <Avatar>
-                <AvatarImage src="" alt="profile image" />
-                <AvatarFallback>{avatarFallback}</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-white rounded-md p-2">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <UserAccount avatarFallback={avatarFallback} handleLogout={handleLogout}/>
     </header>
   );
 }

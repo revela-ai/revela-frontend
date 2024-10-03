@@ -1,19 +1,34 @@
 "use client";
 
 import {
-  CircleUser,
   LayoutDashboardIcon,
-  LineChart,
   LucideSettings,
   Package,
   Users,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SideNavItem from "./side-nav-item";
 import ProfileCard from "./profile-card";
 import Image from "next/image";
 
 const DashboardSidebar: React.FC = () => {
+  const [uniqueLink, setUniqueLink] = useState<string>("");
+
+  useEffect(() => {
+    const storedBusiness = localStorage.getItem("businessDetails");
+    if (storedBusiness) {
+      const businessDetails = JSON.parse(storedBusiness);
+      const businessUniqueLink = businessDetails.unique_link; // Extract unique link
+      const businessName = businessDetails.name; // To ensure formatting is consistent
+
+      if (businessUniqueLink && businessName) {
+        setUniqueLink(
+          `revela.live/${businessName.toLowerCase().replace(/\s+/g, '-')}/${businessUniqueLink}`
+        );
+      }
+    }
+  }, []);
+
   return (
     <div className="hidden border-r bg-muted/40 md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
@@ -42,7 +57,7 @@ const DashboardSidebar: React.FC = () => {
             </SideNavItem>
           </nav>
         </div>
-        <ProfileCard />
+        <ProfileCard uniqueLink={uniqueLink} />
       </div>
     </div>
   );
