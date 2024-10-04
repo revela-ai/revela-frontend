@@ -74,7 +74,7 @@ interface CustomerWithAnalysis extends Customer {
 }
 
 const API_BASE_URL = "https://quantum-backend-sxxx.onrender.com";
-const accessToken = getCookie("access_token");
+
 
 export default function Customers() {
   const [customers, setCustomers] = useState<CustomerWithAnalysis[]>([]);
@@ -87,6 +87,7 @@ export default function Customers() {
     const fetchCustomers = async () => {
       try {
         setLoading(true);
+        const accessToken = getCookie("access_token");
         const response = await fetch(`${API_BASE_URL}/customers/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -119,6 +120,7 @@ export default function Customers() {
     customerId: number
   ): Promise<Analysis | undefined> => {
     try {
+      const accessToken = getCookie("access_token");
       const response = await fetch(
         `${API_BASE_URL}/analysis/customer/${customerId}/`,
         {
