@@ -32,37 +32,116 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Scan from "@/components/scan";
 import { Input } from "@/components/ui/input";
+import { getCookie } from "@/utils/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Customer {
   id: number;
   name: string;
   telephone: string;
-  analysis: {
-    analysis_id: [string, number];
-    skin_type: [string, number];
-    skin_acne: [string, number];
-    skin_age: [string, number]
+  email: string;
+  date_of_birth: string;
+  address: string;
+  country_of_origin: string;
+  created_at: string;
+  updated_at: string;
+  business: string;
+  faces_analysis: { id: number }[];
+}
+
+interface Analysis {
+  image_url: string;
+  rating: number;
+  comment: string | null;
+  result: {
+    faces: {
+      face_id: string;
+      accuracy: number;
+      skin_tone: string;
+      tone_label: string;
+      dominant_colors: { color: string; percent: string }[];
+    }[];
+    skin_age: [string, number, string];
+    skin_acne: [string, number, string];
+    skin_type: [string, number, string];
+    skin_wrinkle: [string, number, string];
   };
   created_at: string;
 }
 
+interface CustomerWithAnalysis extends Customer {
+  analysis?: Analysis;
+}
+
+const API_BASE_URL = "https://quantum-backend-sxxx.onrender.com";
+const accessToken = getCookie("access_token");
+
 export default function Customers() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
-    null
-  );
+  const [customers, setCustomers] = useState<CustomerWithAnalysis[]>([]);
+  const [selectedCustomer, setSelectedCustomer] =
+    useState<CustomerWithAnalysis | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedData = localStorage.getItem("customers");
-    const storedCustomers: Customer[] = storedData
-      ? JSON.parse(storedData)
-      : [];
-    setCustomers(storedCustomers);
+    const fetchCustomers = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${API_BASE_URL}/customers/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (!response.ok) throw new Error("Failed to fetch customers");
+        const data: Customer[] = await response.json();
+
+        // Fetch analysis for each customer
+        const customersWithAnalysis = await Promise.all(
+          data.map(async (customer) => {
+            const analysis = await fetchAnalysis(customer.id);
+            return { ...customer, analysis };
+          })
+        );
+
+        setCustomers(customersWithAnalysis);
+      } catch (err) {
+        setError("Error fetching customers");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
   }, []);
 
-  const handleViewCustomer = (customer: Customer) => {
+  const fetchAnalysis = async (
+    customerId: number
+  ): Promise<Analysis | undefined> => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/analysis/customer/${customerId}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (!response.ok) return undefined;
+      const analysisData: Analysis[] = await response.json();
+      return analysisData[0];
+    } catch (err) {
+      console.error(`Error fetching analysis for customer ${customerId}:`, err);
+      return undefined;
+    }
+  };
+
+  const handleViewCustomer = (customer: CustomerWithAnalysis) => {
     setSelectedCustomer(customer);
   };
+
+  // if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 mt-4 sm:px-6 sm:py-0">
@@ -76,16 +155,8 @@ export default function Customers() {
               className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
             />
           </div>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto">
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <ListFilter className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -102,150 +173,175 @@ export default function Customers() {
             />
           </div>
         </div>
-        <TabsContent value="all">
-          <Card x-chunk="dashboard-06-chunk-0" className="w-[92vw] lg:w-full">
-            {selectedCustomer ? (
-              <>
-                <CardHeader>
-                  <CardTitle>{selectedCustomer.name}</CardTitle>
-                  <CardDescription>
-                    Detailed analysis of the customer&apos;s scan.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Analysis ID</TableHead>
-                        <TableHead>Skin Type</TableHead>
-                        <TableHead>Skin Condition</TableHead>
-                        <TableHead>Skin Age</TableHead>
-                        <TableHead>Last Scan</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell>
-                          {selectedCustomer.analysis.analysis_id}
-                        </TableCell>
-                        <TableCell>
-                          {selectedCustomer.analysis.skin_type[0]}
-                        </TableCell>
-                        <TableCell>
-                          Skin Acne {selectedCustomer.analysis.skin_acne[0]}
-                        </TableCell>
-                        <TableCell>
-                          {selectedCustomer.analysis.skin_age[0]} years old
-                        </TableCell>
-                        <TableCell>
-                          {new Date(
-                            selectedCustomer.created_at
-                          ).toLocaleString()}
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </CardContent>
-                <CardFooter>
-                  <Button onClick={() => setSelectedCustomer(null)}>
-                    Back to Customers
-                  </Button>
-                </CardFooter>
-              </>
-            ) : (
-              <>
-                <CardHeader>
-                  <CardTitle>Customers</CardTitle>
-                  <CardDescription>
-                    Manage your customers, view and compare their skin analysis.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="hidden w-[100px] sm:table-cell">
-                          <span className="sr-only">Image</span>
-                        </TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Phone</TableHead>
-                        <TableHead className="table-cell">
-                          Skin Type
-                        </TableHead>
-                        <TableHead className="table-cell">
-                          Skin Condition
-                        </TableHead>
-                        <TableHead className="table-cell">
-                          Last Scan
-                        </TableHead>
-                        <TableHead>
-                          <span className="sr-only">Actions</span>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {customers.map((customer: Customer, index: number) => (
-                        <TableRow key={index}>
-                          <TableCell className="hidden sm:table-cell">
-                            <Avatar>
-                              <AvatarImage src="" alt="@shadcn" />
-                              <AvatarFallback>
-                                {customer.name.charAt(0)}
-                              </AvatarFallback>
-                            </Avatar>
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {customer.name}
-                          </TableCell>
-                          <TableCell>{customer.telephone}</TableCell>
-                          <TableCell className="table-cell">
-                            {customer.analysis.skin_type[0]}
-                          </TableCell>
-                          <TableCell className="table-cell">
-                            {customer.analysis.skin_acne[0]}
-                          </TableCell>
-                          <TableCell className="table-cell">
-                            {new Date(customer.created_at).toLocaleString()}
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  aria-haspopup="true"
-                                  size="icon"
-                                  variant="ghost"
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                  <span className="sr-only">Toggle menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem
-                                  onClick={() => handleViewCustomer(customer)}
-                                >
-                                  View
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>Edit</DropdownMenuItem>
-                                <DropdownMenuItem>Delete</DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
+        {loading ? (
+          <div className="border rounded-xl p-4 shadow-sm mt-2">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+              <Skeleton className="h-4 w-full rounded-none" />
+            </div>
+          </div>
+        ) : (
+          <TabsContent value="all">
+            <Card className="w-[92vw] lg:w-full">
+              {selectedCustomer ? (
+                <>
+                  <CardHeader>
+                    <CardTitle>{selectedCustomer.name}</CardTitle>
+                    <CardDescription>
+                      Detailed analysis of the customer&apos;s scan.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Skin Type</TableHead>
+                          <TableHead>Skin Condition- Acne</TableHead>
+                          <TableHead>Skin Age</TableHead>
+                          <TableHead>Wrinkles</TableHead>
+                          <TableHead>Last Scan</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-                <CardFooter>
-                  <div className="text-xs text-muted-foreground">
-                    Showing <strong>{customers.length}</strong> of{" "}
-                    <strong>{customers.length}</strong> customers
-                  </div>
-                </CardFooter>
-              </>
-            )}
-          </Card>
-        </TabsContent>
+                      </TableHeader>
+                      <TableBody>
+                        {selectedCustomer.analysis ? (
+                          <TableRow>
+                            <TableCell>
+                              {selectedCustomer.analysis.result.skin_type[0]}
+                            </TableCell>
+                            <TableCell>
+                              {selectedCustomer.analysis.result.skin_acne[0]}
+                            </TableCell>
+                            <TableCell>
+                              {selectedCustomer.analysis.result.skin_age[0]}
+                            </TableCell>
+                            <TableCell>
+                              {selectedCustomer.analysis.result.skin_wrinkle[0]}
+                            </TableCell>
+                            <TableCell>
+                              {new Date(
+                                selectedCustomer.analysis.created_at
+                              ).toLocaleString()}
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={5}>
+                              No analysis data available
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                  <CardFooter>
+                    <Button onClick={() => setSelectedCustomer(null)}>
+                      Back to Customers
+                    </Button>
+                  </CardFooter>
+                </>
+              ) : (
+                <>
+                  <CardHeader>
+                    <CardTitle>Customers</CardTitle>
+                    <CardDescription>
+                      Manage your customers, view and compare their skin
+                      analysis.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="hidden w-[100px] sm:table-cell">
+                            <span className="sr-only">Image</span>
+                          </TableHead>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Phone</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Country</TableHead>
+                          <TableHead>Last Scan</TableHead>
+                          <TableHead>
+                            <span className="sr-only">Actions</span>
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {customers.map((customer) => (
+                          <TableRow key={customer.id}>
+                            <TableCell className="hidden sm:table-cell">
+                              <Avatar>
+                                <AvatarImage src="" alt="@shadcn" />
+                                <AvatarFallback>
+                                  {customer.name.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {customer.name}
+                            </TableCell>
+                            <TableCell>{customer.telephone}</TableCell>
+                            <TableCell>{customer.email}</TableCell>
+                            <TableCell>{customer.country_of_origin}</TableCell>
+                            <TableCell>
+                              {customer.analysis
+                                ? new Date(
+                                    customer.analysis.created_at
+                                  ).toLocaleString()
+                                : "N/A"}
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    aria-label="Open menu"
+                                    variant="ghost"
+                                    size="sm"
+                                  >
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    onClick={() => handleViewCustomer(customer)}
+                                  >
+                                    View
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>Edit</DropdownMenuItem>
+                                  <DropdownMenuItem>Delete</DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                  <CardFooter>
+                    <div className="text-xs text-muted-foreground">
+                      Showing <strong>{customers.length}</strong> of{" "}
+                      <strong>{customers.length}</strong> customers
+                    </div>
+                  </CardFooter>
+                </>
+              )}
+            </Card>
+          </TabsContent>
+        )}
       </Tabs>
     </main>
   );

@@ -115,8 +115,8 @@ export default function NavigationBar() {
                 </a>
               </div>
             </div>
-            <div className="min-h-[87vh] md:min-h-0 flex lg:w-full">
-              <div className="text-center lg:ms-auto flex-col md:flex-row flex items-center justify-center gap-4 md:pt-0 pt-5 mx-auto w-full lg:w-fit">
+            <div className="min-h-[87vh] md:min-h-0 flex lg:w-fit lg:ms-auto">
+              <div className="text-center mx-auto lg:ms-auto flex-col md:flex-row flex items-center justify-center gap-4 md:pt-0 pt-5 w-full lg:w-fit">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button className="rounded-full w-full h-12 lg:h-8 bg-transparent border border-primary text-primary hover:text-white">
