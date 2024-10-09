@@ -302,7 +302,7 @@ export default function Products() {
               </CardContent>
               <CardFooter>
                 <div className="text-xs text-muted-foreground">
-                  Showing <strong>{products.length} - 10</strong> of{" "}
+                  Showing <strong>{products.length}</strong> of{" "}
                   <strong>{products.length}</strong> products
                 </div>
               </CardFooter>

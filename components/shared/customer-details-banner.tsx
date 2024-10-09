@@ -31,7 +31,6 @@ export default function CustomerDetailsBanner() {
   const [businessName, setBusinessName] = useState<string>("");
 
   useEffect(() => {
-    // Check if running in a browser environment
     if (typeof window !== "undefined") {
       const email = localStorage.getItem("userEmail");
       setEmail(email);

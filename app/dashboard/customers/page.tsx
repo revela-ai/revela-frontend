@@ -96,7 +96,6 @@ export default function Customers() {
         if (!response.ok) throw new Error("Failed to fetch customers");
         const data: Customer[] = await response.json();
 
-        // Fetch analysis for each customer
         const customersWithAnalysis = await Promise.all(
           data.map(async (customer) => {
             const analysis = await fetchAnalysis(customer.id);
@@ -142,7 +141,6 @@ export default function Customers() {
     setSelectedCustomer(customer);
   };
 
-  // if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (

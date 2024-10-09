@@ -17,7 +17,6 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import RevelaLogo from "@/components/shared/logo";
 import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z

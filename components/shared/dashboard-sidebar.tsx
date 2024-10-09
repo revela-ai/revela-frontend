@@ -2,7 +2,6 @@
 
 import {
   LayoutDashboardIcon,
-  LucideSettings,
   Package,
   Users,
 } from "lucide-react";
@@ -10,24 +9,24 @@ import React, { useEffect, useState } from "react";
 import SideNavItem from "./side-nav-item";
 import ProfileCard from "./profile-card";
 import Image from "next/image";
+import { useLocalStorage } from "@/utils/utils";
+
+
 
 const DashboardSidebar: React.FC = () => {
+  const [businessDetails] = useLocalStorage('businessDetails', null);
   const [uniqueLink, setUniqueLink] = useState<string>("");
 
   useEffect(() => {
-    const storedBusiness = localStorage.getItem("businessDetails");
-    if (storedBusiness) {
-      const businessDetails = JSON.parse(storedBusiness);
-      const businessUniqueLink = businessDetails.unique_link; // Extract unique link
-      const businessName = businessDetails.name; // To ensure formatting is consistent
-
-      if (businessUniqueLink && businessName) {
+    if (businessDetails) {
+      const { unique_link, name } = businessDetails;
+      if (unique_link && name) {
         setUniqueLink(
-          `revela.live/${businessName.toLowerCase().replace(/\s+/g, '-')}/${businessUniqueLink}`
+          `https://www.revela.live/${name.toLowerCase().replace(/\s+/g, '-')}/${unique_link}`
         );
       }
     }
-  }, []);
+  }, [businessDetails]);
 
   return (
     <div className="hidden border-r bg-muted/40 md:block">
