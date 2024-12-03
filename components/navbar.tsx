@@ -34,7 +34,7 @@ export default function NavigationBar() {
     };
   }, [isOpen]);
 
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/join-waitlist")) {
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/join-waitlist") || pathname.startsWith("/")) {
     return null;
   }
 
